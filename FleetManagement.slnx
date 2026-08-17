@@ -1,2 +1,9 @@
 <Solution>
+  <Folder Name="/Services/" />
+  <Folder Name="/Services/Fleet/">
+    <Project Path="Services/Fleet/Fleet.API/Fleet.API.csproj" />
+    <Project Path="Services/Fleet/Fleet.Application/Fleet.Application.csproj" />
+    <Project Path="Services/Fleet/Fleet.Core/Fleet.Core.csproj" />
+    <Project Path="Services/Fleet/Fleet.Infrastructure/Fleet.Infrastructure.csproj" />
+  </Folder>
 </Solution>
