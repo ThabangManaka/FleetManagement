@@ -1,4 +1,6 @@
 using Fleet.Infrastructure.Persistence;
+using Fleet.Application;
+using Fleet.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +12,11 @@ builder.Services.AddDbContext<FleetDbContext>(options =>
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+builder.Services.AddApplication();
+
+builder.Services.AddInfrastructure(
+    builder.Configuration);
+
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 

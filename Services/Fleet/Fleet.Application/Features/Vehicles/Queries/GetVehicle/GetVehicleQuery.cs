@@ -4,7 +4,5 @@ using System.Text;
 
 namespace Fleet.Application.Features.Vehicles.Queries.GetVehicle
 {
-    internal class GetVehicleQuery
-    {
-    }
+    public record GetVehicleQuery(Guid Id);
 }

@@ -4,7 +4,5 @@ using System.Text;
 
 namespace Fleet.Application.Features.Vehicles.Queries.GetVehicles
 {
-    internal class GetVehiclesQuery
-    {
-    }
+    public record GetVehiclesQuery;
 }
