@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Fleet.Application.Features.Vehicles.Commands
 {
-    internal class CreateVehicle
+    internal class CreateVehicleCommand
     {
     }
 }
