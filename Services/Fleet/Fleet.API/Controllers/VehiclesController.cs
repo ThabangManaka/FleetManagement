@@ -46,7 +46,7 @@ namespace Fleet.API.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAll(
-     CancellationToken cancellationToken)
+         CancellationToken cancellationToken)
         {
             var result = await _getAllHandler.HandleAsync(
                 new GetVehiclesQuery(),
@@ -57,8 +57,8 @@ namespace Fleet.API.Controllers
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(
-     Guid id,
-     CancellationToken cancellationToken)
+         Guid id,
+          CancellationToken cancellationToken)
         {
             var result = await _getHandler.HandleAsync(
                 new GetVehicleQuery(id),
@@ -88,6 +88,18 @@ namespace Fleet.API.Controllers
                 cancellationToken);
 
             return Ok(result);
+        }
+
+        [HttpDelete("{id:guid}")]
+        public async Task<IActionResult> Delete(
+        Guid id,
+        CancellationToken cancellationToken)
+        {
+            await _deleteHandler.HandleAsync(
+                new DeleteVehicleCommand(id),
+                cancellationToken);
+
+            return NoContent();
         }
     }
 }
