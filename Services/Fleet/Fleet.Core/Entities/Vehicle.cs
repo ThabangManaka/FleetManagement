@@ -1,3 +1,5 @@
+using Fleet.Core.Enums;
+
 namespace Fleet.Core.Entities;
 
 public class Vehicle
@@ -14,11 +16,11 @@ public class Vehicle
 
     public int Year { get; private set; }
 
-    public string FuelType { get; private set; } = string.Empty;
+    public FuelType FuelType { get; private set; }
 
     public decimal Mileage { get; private set; }
 
-    public string Status { get; private set; } = string.Empty;
+    public VehicleStatus Status { get; private set; }
 
     public DateTime CreatedAt { get; private set; }
 
@@ -34,7 +36,7 @@ public class Vehicle
         string make,
         string model,
         int year,
-        string fuelType)
+        FuelType fuelType)
     {
         Id = Guid.NewGuid();
         RegistrationNumber = registrationNumber;
@@ -44,7 +46,27 @@ public class Vehicle
         Year = year;
         FuelType = fuelType;
         Mileage = 0;
-        Status = "Available";
+        Status = VehicleStatus.Available;
         CreatedAt = DateTime.UtcNow;
+    }
+    public void UpdateDetails(
+    string registrationNumber,
+    string vin,
+    string make,
+    string model,
+    int year,
+    FuelType fuelType,
+    VehicleStatus status,
+    decimal mileage)
+    {
+        RegistrationNumber = registrationNumber;
+        Vin = vin;
+        Make = make;
+        Model = model;
+        Year = year;
+        FuelType = fuelType;
+        Status = status;
+        Mileage = mileage;
+        UpdatedAt = DateTime.UtcNow;
     }
 }

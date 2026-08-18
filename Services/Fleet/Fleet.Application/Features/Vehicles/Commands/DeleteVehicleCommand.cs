@@ -3,5 +3,6 @@ using Fleet.Application.Features.Vehicles.DTOs;
 
 namespace Fleet.Application.Features.Vehicles.Commands
 {
-    public record CreateVehicleCommand(CreateVehicleRequest Request);
+    public record DeleteVehicleCommand(
+    Guid Id);
 }
