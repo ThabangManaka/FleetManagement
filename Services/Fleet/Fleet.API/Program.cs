@@ -1,6 +1,7 @@
-using Fleet.Infrastructure.Persistence;
+using Fleet.API.Middleware;
 using Fleet.Application;
 using Fleet.Infrastructure;
+using Fleet.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,13 +15,14 @@ builder.Services.AddInfrastructure(
     builder.Configuration);
 
 builder.Services.AddControllers();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 //builder.Services.AddOpenApi();
 
 var app = builder.Build();
-
+app.UseExceptionHandler();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
