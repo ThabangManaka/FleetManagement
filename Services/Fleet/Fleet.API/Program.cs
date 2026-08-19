@@ -3,6 +3,16 @@ using Fleet.Application;
 using Fleet.Infrastructure;
 using Fleet.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+
+
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .WriteTo.File(
+        "logs/fleet-api-.log",
+        rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
 
 var builder = WebApplication.CreateBuilder(args);
 
