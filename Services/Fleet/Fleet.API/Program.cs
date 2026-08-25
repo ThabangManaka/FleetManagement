@@ -44,8 +44,6 @@ try
     app.UseSwagger();
     app.UseSwaggerUI();
 
-    app.UseHttpsRedirection();
-    app.MapHealthChecks("/health");
 
     app.MapControllers();
 

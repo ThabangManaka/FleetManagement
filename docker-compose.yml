@@ -1,0 +1,16 @@
+services:
+
+  fleet-api:
+    image: fleet-api:latest
+    container_name: fleet-api
+    ports:
+      - "8000:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__FleetDb: "Server=fleetdb,1433;Database=FleetDb;User Id=sa;Password=StrongPassword123!;TrustServerCertificate=True;"
+    networks:
+      - fleet-network
+
+networks:
+  fleet-network:
+    external: true
