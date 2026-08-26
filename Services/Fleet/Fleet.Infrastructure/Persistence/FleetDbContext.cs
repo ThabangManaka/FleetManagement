@@ -12,6 +12,8 @@ public class FleetDbContext : DbContext
 
     public DbSet<Vehicle> Vehicles => Set<Vehicle>();
 
+    public DbSet<Driver> Drivers => Set<Driver>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {  
 

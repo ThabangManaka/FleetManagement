@@ -2,7 +2,7 @@ using Fleet.Core.Enums;
 
 namespace Fleet.Core.Entities;
 
-public class Vehicle
+public partial class Vehicle
 {
     public Guid Id { get; private set; }
 
@@ -69,4 +69,4 @@ public class Vehicle
         Mileage = mileage;
         UpdatedAt = DateTime.UtcNow;
     }
-}
+    }
