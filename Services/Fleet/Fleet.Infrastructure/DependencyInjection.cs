@@ -24,6 +24,7 @@ namespace Fleet.Infrastructure
 
             services.AddScoped<IVehicleRepository, VehicleRepository>();
             services.AddScoped<IDriverRepository, DriverRepository>();
+            services.AddScoped< IVehicleAssignmentRepository,VehicleAssignmentRepository>();
 
             return services;
         }
