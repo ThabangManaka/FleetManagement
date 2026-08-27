@@ -1,4 +1,5 @@
 ﻿
+using Fleet.Application;
 using Fleet.Application.Interfaces;
 using Fleet.Infrastructure.Persistence;
 using Fleet.Infrastructure.Repositories;
@@ -22,6 +23,7 @@ namespace Fleet.Infrastructure
                     configuration.GetConnectionString("FleetDb")));
 
             services.AddScoped<IVehicleRepository, VehicleRepository>();
+            services.AddScoped<IDriverRepository, DriverRepository>();
 
             return services;
         }
