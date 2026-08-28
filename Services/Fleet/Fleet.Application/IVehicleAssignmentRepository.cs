@@ -4,6 +4,10 @@ namespace Fleet.Application
 {
     public interface IVehicleAssignmentRepository
     {
+        Task<VehicleAssignment?> GetByIdAsync(
+           Guid id,
+           CancellationToken cancellationToken = default);
+
         Task<bool> HasActiveAssignmentForVehicleAsync(
             Guid vehicleId,
             CancellationToken cancellationToken = default);
@@ -19,4 +23,5 @@ namespace Fleet.Application
         Task SaveChangesAsync(
             CancellationToken cancellationToken = default);
     }
+}
 }
