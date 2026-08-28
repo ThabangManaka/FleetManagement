@@ -44,3 +44,4 @@ namespace Fleet.Core.Entities
             return UnassignedAt == null;
         }
     }
+}
