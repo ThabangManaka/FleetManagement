@@ -14,7 +14,15 @@ namespace Fleet.Infrastructure.Repositories
         {
             _context = context;
         }
-
+        public async Task<VehicleAssignment?> GetByIdAsync(
+        Guid id,
+        CancellationToken cancellationToken = default)
+        {
+            return await _context.VehicleAssignments
+                .FirstOrDefaultAsync(
+                    x => x.Id == id,
+                    cancellationToken);
+        }
         public async Task<bool> HasActiveAssignmentForVehicleAsync(
             Guid vehicleId,
             CancellationToken cancellationToken = default)
