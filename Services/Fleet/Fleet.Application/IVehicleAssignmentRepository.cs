@@ -4,6 +4,8 @@ namespace Fleet.Application
 {
     public interface IVehicleAssignmentRepository
     {
+        Task<List<VehicleAssignment>> GetAllAsync(
+          CancellationToken cancellationToken = default);
         Task<VehicleAssignment?> GetByIdAsync(
            Guid id,
            CancellationToken cancellationToken = default);
@@ -24,4 +26,4 @@ namespace Fleet.Application
             CancellationToken cancellationToken = default);
     }
 }
-}
+

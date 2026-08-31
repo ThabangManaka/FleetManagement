@@ -1,10 +1,11 @@
 ﻿
 namespace Fleet.Application.Features.Vehicles.DTOs
 {
-    public record VehicleAssignmentDto(
+    public record VehicleAssignmentListDto(
     Guid Id,
     Guid VehicleId,
     Guid DriverId,
     DateTime AssignedAt,
-    DateTime? UnassignedAt);
+    DateTime? UnassignedAt
+);
 }
