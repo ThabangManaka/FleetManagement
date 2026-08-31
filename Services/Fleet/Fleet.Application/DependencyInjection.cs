@@ -12,24 +12,19 @@ namespace Fleet.Application
     public static class DependencyInjection
     {
         public static IServiceCollection AddApplication(
-            this IServiceCollection services)
+          this IServiceCollection services)
         {
+            // MediatR - automatically discovers all handlers
             services.AddMediatR(cfg =>
-            cfg.RegisterServicesFromAssembly(typeof(AssemblyReference).Assembly));
+                cfg.RegisterServicesFromAssembly(
+                    typeof(AssemblyReference).Assembly));
 
+            // FluentValidation
             services.AddValidatorsFromAssembly(
                 Assembly.GetExecutingAssembly());
 
-            services.AddScoped<CreateVehicleCommandHandler>();
-            services.AddScoped<UpdateVehicleCommandHandler>();
-            services.AddScoped<DeleteVehicleCommandHandler>();
-
-            services.AddScoped<GetVehicleQueryHandler>();
-            services.AddScoped<GetVehiclesQueryHandler>();
-
             return services;
         }
-
-
     }
+
 }

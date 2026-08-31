@@ -4,8 +4,8 @@ using MediatR;
 
 namespace Fleet.Application.Features.Vehicles.Handlers
 {
-    public class GetVehicleAssignmentsQueryHandler
-    : IRequestHandler<GetVehicleAssignmentsQuery, List<VehicleAssignmentListDto>>
+     public class GetVehicleAssignmentsQueryHandler
+        : IRequestHandler<GetVehicleAssignmentsQuery, List<VehicleAssignmentDto>>
     {
         private readonly IVehicleAssignmentRepository _assignmentRepository;
 
@@ -15,20 +15,20 @@ namespace Fleet.Application.Features.Vehicles.Handlers
             _assignmentRepository = assignmentRepository;
         }
 
-        public async Task<List<VehicleAssignmentListDto>> Handle(
-            GetVehicleAssignmentsQuery request,
+        public async Task<List<VehicleAssignmentDto>> Handle(
+            GetVehicleAssignmentsQuery query,
             CancellationToken cancellationToken)
         {
             var assignments = await _assignmentRepository.GetAllAsync(
                 cancellationToken);
 
             return assignments
-                .Select(x => new VehicleAssignmentListDto(
-                    x.Id,
-                    x.VehicleId,
-                    x.DriverId,
-                    x.AssignedAt,
-                    x.UnassignedAt))
+                .Select(assignment => new VehicleAssignmentDto(
+                    assignment.Id,
+                    assignment.VehicleId,
+                    assignment.DriverId,
+                    assignment.AssignedAt,
+                    assignment.UnassignedAt))
                 .ToList();
         }
     }

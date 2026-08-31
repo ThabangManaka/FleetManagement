@@ -14,7 +14,7 @@ namespace Fleet.Infrastructure.Repositories
             _context = context;
         }
 
-        public async Task<Driver?> GetByIdAsync(Guid id)
+        public async Task<Driver?> GetByIdAsync(Guid id,CancellationToken cancellationToken = default)
         {
             return await _context.Drivers
                 .FirstOrDefaultAsync(x => x.Id == id);

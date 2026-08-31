@@ -7,7 +7,7 @@ namespace Fleet.Application
 {
     public interface IDriverRepository
     {
-        Task<Driver?> GetByIdAsync(Guid id);
+        Task<Driver?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
 
         Task<List<Driver>> GetAllAsync();
 

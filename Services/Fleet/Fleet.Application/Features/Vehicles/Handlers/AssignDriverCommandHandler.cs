@@ -6,7 +6,7 @@ using MediatR;
 namespace Fleet.Application.Features.Vehicles.Handlers
 {
     public class AssignDriverCommandHandler
-    : IRequestHandler<AssignDriverCommand, Guid>
+      : IRequestHandler<AssignDriverCommand, Guid>
     {
         private readonly IVehicleRepository _vehicleRepository;
         private readonly IDriverRepository _driverRepository;
@@ -33,35 +33,30 @@ namespace Fleet.Application.Features.Vehicles.Handlers
             if (vehicle is null)
             {
                 throw new KeyNotFoundException(
-                    $"Vehicle with ID '{command.VehicleId}' was not found.");
+                    $"Vehicle '{command.VehicleId}' was not found.");
             }
 
             var driver = await _driverRepository.GetByIdAsync(
-                command.DriverId);
+                command.DriverId,
+                cancellationToken);
 
             if (driver is null)
             {
                 throw new KeyNotFoundException(
-                    $"Driver with ID '{command.DriverId}' was not found.");
+                    $"Driver '{command.DriverId}' was not found.");
             }
 
-            var vehicleAlreadyAssigned =
-                await _assignmentRepository.HasActiveAssignmentForVehicleAsync(
-                    command.VehicleId,
-                    cancellationToken);
-
-            if (vehicleAlreadyAssigned)
+            if (await _assignmentRepository.HasActiveAssignmentForVehicleAsync(
+                command.VehicleId,
+                cancellationToken))
             {
                 throw new InvalidOperationException(
                     "The vehicle is already assigned to a driver.");
             }
 
-            var driverAlreadyAssigned =
-                await _assignmentRepository.HasActiveAssignmentForDriverAsync(
-                    command.DriverId,
-                    cancellationToken);
-
-            if (driverAlreadyAssigned)
+            if (await _assignmentRepository.HasActiveAssignmentForDriverAsync(
+                command.DriverId,
+                cancellationToken))
             {
                 throw new InvalidOperationException(
                     "The driver is already assigned to a vehicle.");
