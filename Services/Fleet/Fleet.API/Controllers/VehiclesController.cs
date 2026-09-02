@@ -1,54 +1,42 @@
 ﻿using Fleet.Application.Features.Vehicles.Commands;
-using Fleet.Application.Features.Vehicles.Handlers;
 using Fleet.Application.Features.Vehicles.Queries.GetVehicle;
 using Fleet.Application.Features.Vehicles.Queries.GetVehicles;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fleet.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class VehiclesController : Controller
+    public class VehiclesController : ControllerBase
     {
-        private readonly CreateVehicleCommandHandler _createHandler;
-        private readonly UpdateVehicleCommandHandler _updateHandler;
-        private readonly DeleteVehicleCommandHandler _deleteHandler;
-        private readonly GetVehicleQueryHandler _getHandler;
-        private readonly GetVehiclesQueryHandler _getAllHandler;
+        private readonly IMediator _mediator;
 
-        public VehiclesController(CreateVehicleCommandHandler createHandler,
-            UpdateVehicleCommandHandler updateHandler,
-            DeleteVehicleCommandHandler deleteHandler,
-            GetVehicleQueryHandler getHandler,
-            GetVehiclesQueryHandler getAllHandler)
+        public VehiclesController(IMediator mediator)
         {
-            _createHandler = createHandler;
-            _updateHandler = updateHandler;
-            _deleteHandler = deleteHandler;
-            _getHandler = getHandler;
-            _getAllHandler = getAllHandler;
+            _mediator = mediator;
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(
-        CreateVehicleCommand command,
-        CancellationToken cancellationToken)
+            CreateVehicleCommand command,
+            CancellationToken cancellationToken)
         {
-            var result = await _createHandler.HandleAsync(
+            var result = await _mediator.Send(
                 command,
                 cancellationToken);
 
             return CreatedAtAction(
                 nameof(GetById),
-                new { id = result.Id },
+                new { id = result.Id},
                 result);
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll(
-         CancellationToken cancellationToken)
+            CancellationToken cancellationToken)
         {
-            var result = await _getAllHandler.HandleAsync(
+            var result = await _mediator.Send(
                 new GetVehiclesQuery(),
                 cancellationToken);
 
@@ -57,10 +45,10 @@ namespace Fleet.API.Controllers
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(
-         Guid id,
-          CancellationToken cancellationToken)
+            Guid id,
+            CancellationToken cancellationToken)
         {
-            var result = await _getHandler.HandleAsync(
+            var result = await _mediator.Send(
                 new GetVehicleQuery(id),
                 cancellationToken);
 
@@ -74,16 +62,17 @@ namespace Fleet.API.Controllers
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(
-        Guid id,
-        UpdateVehicleCommand command,
-        CancellationToken cancellationToken)
+            Guid id,
+            UpdateVehicleCommand command,
+            CancellationToken cancellationToken)
         {
             if (id != command.Id)
             {
-                return BadRequest("The vehicle ID does not match.");
+                return BadRequest(
+                    "The vehicle ID does not match.");
             }
 
-            var result = await _updateHandler.HandleAsync(
+            var result = await _mediator.Send(
                 command,
                 cancellationToken);
 
@@ -92,10 +81,10 @@ namespace Fleet.API.Controllers
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(
-        Guid id,
-        CancellationToken cancellationToken)
+            Guid id,
+            CancellationToken cancellationToken)
         {
-            await _deleteHandler.HandleAsync(
+            await _mediator.Send(
                 new DeleteVehicleCommand(id),
                 cancellationToken);
 

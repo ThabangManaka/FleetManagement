@@ -1,12 +1,11 @@
 ﻿using Fleet.Application.Features.Vehicles.DTOs;
 using Fleet.Application.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using MediatR;
 
 namespace Fleet.Application.Features.Vehicles.Queries.GetVehicle
 {
     public class GetVehicleQueryHandler
+        : IRequestHandler<GetVehicleQuery, VehicleResponse?>
     {
         private readonly IVehicleRepository _vehicleRepository;
 
@@ -16,15 +15,15 @@ namespace Fleet.Application.Features.Vehicles.Queries.GetVehicle
             _vehicleRepository = vehicleRepository;
         }
 
-        public async Task<VehicleResponse?> HandleAsync(
+        public async Task<VehicleResponse?> Handle(
             GetVehicleQuery query,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             var vehicle = await _vehicleRepository.GetByIdAsync(
                 query.Id,
                 cancellationToken);
 
-            if (vehicle == null)
+            if (vehicle is null)
             {
                 return null;
             }

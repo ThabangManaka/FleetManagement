@@ -3,21 +3,24 @@ using Fleet.Application.Features.Vehicles.DTOs;
 using Fleet.Application.Interfaces;
 using Fleet.Core.Entities;
 using Fleet.Core.Enums;
+using MediatR;
 
 namespace Fleet.Application.Features.Vehicles.Handlers
 {
     public class CreateVehicleCommandHandler
+        : IRequestHandler<CreateVehicleCommand, VehicleResponse>
     {
         private readonly IVehicleRepository _vehicleRepository;
 
-        public CreateVehicleCommandHandler(IVehicleRepository vehicleRepository)
+        public CreateVehicleCommandHandler(
+            IVehicleRepository vehicleRepository)
         {
             _vehicleRepository = vehicleRepository;
         }
 
-        public async Task<VehicleResponse> HandleAsync(
+        public async Task<VehicleResponse> Handle(
             CreateVehicleCommand command,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken)
         {
             var request = command.Request;
 

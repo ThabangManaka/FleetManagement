@@ -1,8 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Fleet.Application.Features.Vehicles.DTOs;
+using MediatR;
+
 
 namespace Fleet.Application.Features.Vehicles.Queries.GetVehicle
 {
-    public record GetVehicleQuery(Guid Id);
+
+    public record GetVehicleQuery(Guid Id)
+        : IRequest<VehicleResponse?>;
 }
