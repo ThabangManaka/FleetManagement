@@ -1,9 +1,7 @@
 ﻿using Fleet.Application.Features.Commands;
+using Fleet.Application.Interfaces;
 using Fleet.Core.Entities;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Fleet.Application.Features.Handlers
 {
@@ -31,7 +29,9 @@ namespace Fleet.Application.Features.Handlers
                 command.Request.LicenseNumber,
                 command.Request.LicenseExpiryDate);
 
-            await _driverRepository.AddAsync(driver);
+            await _driverRepository.AddAsync(
+                driver,
+                cancellationToken);
 
             await _driverRepository.SaveChangesAsync();
 

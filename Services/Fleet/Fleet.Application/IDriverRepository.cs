@@ -11,7 +11,7 @@ namespace Fleet.Application
 
         Task<List<Driver>> GetAllAsync();
 
-        Task AddAsync(Driver driver);
+        Task AddAsync(Driver driver, CancellationToken cancellationToken);
 
         void Update(Driver driver);
 

@@ -1,56 +1,38 @@
-﻿using Fleet.Application;
+﻿using Fleet.Application.Features.Commands;
 using Fleet.Core.Entities;
-using Fleet.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
+using MediatR;
 
-namespace Fleet.Infrastructure.Repositories
+namespace Fleet.Application.Features.Handlers
 {
-    public class DriverRepository : IDriverRepository
+    public class CreateDriverCommandHandler
+        : IRequestHandler<CreateDriverCommand, Guid>
     {
-        private readonly FleetDbContext _context;
+        private readonly IDriverRepository _driverRepository;
 
-        public DriverRepository(FleetDbContext context)
+        public CreateDriverCommandHandler(
+            IDriverRepository driverRepository)
         {
-            _context = context;
+            _driverRepository = driverRepository;
         }
 
-        public async Task<Driver?> GetByIdAsync(Guid id,CancellationToken cancellationToken = default)
+        public async Task<Guid> Handle(
+            CreateDriverCommand command,
+            CancellationToken cancellationToken)
         {
-            return await _context.Drivers
-                .FirstOrDefaultAsync(x => x.Id == id);
-        }
+            var driver = new Driver(
+                command.Request.EmployeeNumber,
+                command.Request.FirstName,
+                command.Request.LastName,
+                command.Request.Email,
+                command.Request.PhoneNumber,
+                command.Request.LicenseNumber,
+                command.Request.LicenseExpiryDate);
 
-        public async Task<List<Driver>> GetAllAsync()
-        {
-            return await _context.Drivers
-                .AsNoTracking()
-                .ToListAsync();
-        }
+            await _driverRepository.AddAsync(driver);
 
-        public async Task AddAsync(Driver driver)
-        {
-            await _context.Drivers.AddAsync(driver);
-        }
+            await _driverRepository.SaveChangesAsync();
 
-        public void Update(Driver driver)
-        {
-            _context.Drivers.Update(driver);
-        }
-
-        public void Delete(Driver driver)
-        {
-            _context.Drivers.Remove(driver);
-        }
-
-        public async Task<bool> ExistsAsync(Guid id)
-        {
-            return await _context.Drivers
-                .AnyAsync(x => x.Id == id);
-        }
-
-        public async Task SaveChangesAsync()
-        {
-            await _context.SaveChangesAsync();
+            return driver.Id;
         }
     }
 }
