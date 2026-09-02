@@ -1,11 +1,10 @@
-﻿using Fleet.Application.Features.Commands;
-using Fleet.Application.Features.Vehicles.Commands.UnassignDriver;
+﻿using Fleet.Application.Features.Vehicles.Commands.UnassignDriver;
 using MediatR;
 
-namespace Fleet.Application.Features.Handlers
+namespace Fleet.Application.Features.Vehicles.Handlers
 {
     public class UnassignDriverCommandHandler
-        : IRequestHandler<UnassignDriverCommand>
+    : IRequestHandler<UnassignDriverCommand>
     {
         private readonly IVehicleAssignmentRepository _assignmentRepository;
 
@@ -26,13 +25,7 @@ namespace Fleet.Application.Features.Handlers
             if (assignment is null)
             {
                 throw new KeyNotFoundException(
-                    $"Vehicle assignment with ID '{command.Id}' was not found.");
-            }
-
-            if (!assignment.IsActive())
-            {
-                throw new InvalidOperationException(
-                    "This vehicle assignment has already been unassigned.");
+                    $"Vehicle assignment '{command.Id}' was not found.");
             }
 
             assignment.Unassign();

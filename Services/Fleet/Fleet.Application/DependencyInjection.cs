@@ -1,10 +1,7 @@
-﻿using Fleet.Application.Features.Vehicles.Handlers;
-using Fleet.Application.Features.Vehicles.Queries.GetVehicle;
-using Fleet.Application.Features.Vehicles.Queries.GetVehicles;
-using FluentValidation;
+﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using System.Reflection.Metadata;
+
 
 
 namespace Fleet.Application

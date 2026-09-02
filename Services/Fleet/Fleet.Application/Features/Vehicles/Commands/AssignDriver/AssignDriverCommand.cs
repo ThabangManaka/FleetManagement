@@ -7,3 +7,4 @@ namespace Fleet.Application.Features.Vehicles.Commands.AssignDriver
        Guid DriverId
    ) : IRequest<Guid>;
 }
+

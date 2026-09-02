@@ -1,9 +1,6 @@
 ﻿using MediatR;
 
 
-namespace Fleet.Application.Features.Commands
-{
-    public record UnassignDriverCommand(
-    Guid VehicleAssignmentId
-) : IRequest;
-}
+namespace Fleet.Application.Features.Vehicles.Commands.UnassignDriver;
+
+public record UnassignDriverCommand(Guid Id) : IRequest;
