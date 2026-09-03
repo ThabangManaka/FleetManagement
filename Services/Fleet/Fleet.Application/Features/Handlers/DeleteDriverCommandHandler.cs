@@ -1,10 +1,11 @@
 ﻿using Fleet.Application.Features.Commands;
+using Fleet.Application.Interfaces;
 using MediatR;
 
 namespace Fleet.Application.Features.Handlers
 {
     public class DeleteDriverCommandHandler
-    : IRequestHandler<DeleteDriverCommand>
+        : IRequestHandler<DeleteDriverCommand>
     {
         private readonly IDriverRepository _driverRepository;
 
@@ -18,7 +19,9 @@ namespace Fleet.Application.Features.Handlers
             DeleteDriverCommand command,
             CancellationToken cancellationToken)
         {
-            var driver = await _driverRepository.GetByIdAsync(command.Id);
+            var driver = await _driverRepository.GetByIdAsync(
+                command.Id,
+                cancellationToken);
 
             if (driver is null)
             {
@@ -28,7 +31,8 @@ namespace Fleet.Application.Features.Handlers
 
             _driverRepository.Delete(driver);
 
-            await _driverRepository.SaveChangesAsync();
+            await _driverRepository.SaveChangesAsync(
+                cancellationToken);
         }
     }
 }

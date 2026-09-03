@@ -1,10 +1,11 @@
 ﻿using Fleet.Application.Features.Drivers.DTOs;
+using Fleet.Application.Interfaces;
 using MediatR;
 
 namespace Fleet.Application.Features.Vehicles.Queries.GetDrivers
 {
     public class GetDriversQueryHandler
-    : IRequestHandler<GetDriversQuery, List<DriverResponse>>
+        : IRequestHandler<GetDriversQuery, List<DriverResponse>>
     {
         private readonly IDriverRepository _driverRepository;
 
@@ -18,7 +19,8 @@ namespace Fleet.Application.Features.Vehicles.Queries.GetDrivers
             GetDriversQuery query,
             CancellationToken cancellationToken)
         {
-            var drivers = await _driverRepository.GetAllAsync();
+            var drivers = await _driverRepository.GetAllAsync(
+                cancellationToken);
 
             return drivers
                 .Select(driver => new DriverResponse(

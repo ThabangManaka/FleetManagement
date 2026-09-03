@@ -1,10 +1,11 @@
 ﻿using Fleet.Application.Features.Commands;
+using Fleet.Application.Interfaces;
 using MediatR;
 
 namespace Fleet.Application.Features.Handlers
 {
     public class UpdateDriverCommandHandler
-    : IRequestHandler<UpdateDriverCommand>
+        : IRequestHandler<UpdateDriverCommand>
     {
         private readonly IDriverRepository _driverRepository;
 
@@ -18,7 +19,9 @@ namespace Fleet.Application.Features.Handlers
             UpdateDriverCommand command,
             CancellationToken cancellationToken)
         {
-            var driver = await _driverRepository.GetByIdAsync(command.Id);
+            var driver = await _driverRepository.GetByIdAsync(
+                command.Id,
+                cancellationToken);
 
             if (driver is null)
             {
@@ -38,8 +41,8 @@ namespace Fleet.Application.Features.Handlers
 
             _driverRepository.Update(driver);
 
-            await _driverRepository.SaveChangesAsync();
+            await _driverRepository.SaveChangesAsync(
+                cancellationToken);
         }
     }
-    
 }

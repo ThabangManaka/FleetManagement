@@ -1,38 +1,67 @@
-﻿using Fleet.Application.Features.Commands;
+﻿using Fleet.Application.Interfaces;
 using Fleet.Core.Entities;
-using MediatR;
+using Fleet.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
-namespace Fleet.Application.Features.Handlers
+namespace Fleet.Infrastructure.Repositories
 {
-    public class CreateDriverCommandHandler
-        : IRequestHandler<CreateDriverCommand, Guid>
+    public class DriverRepository : IDriverRepository
     {
-        private readonly IDriverRepository _driverRepository;
+        private readonly FleetDbContext _context;
 
-        public CreateDriverCommandHandler(
-            IDriverRepository driverRepository)
+        public DriverRepository(FleetDbContext context)
         {
-            _driverRepository = driverRepository;
+            _context = context;
         }
 
-        public async Task<Guid> Handle(
-            CreateDriverCommand command,
-            CancellationToken cancellationToken)
+        public async Task<Driver?> GetByIdAsync(
+            Guid id,
+            CancellationToken cancellationToken = default)
         {
-            var driver = new Driver(
-                command.Request.EmployeeNumber,
-                command.Request.FirstName,
-                command.Request.LastName,
-                command.Request.Email,
-                command.Request.PhoneNumber,
-                command.Request.LicenseNumber,
-                command.Request.LicenseExpiryDate);
+            return await _context.Drivers
+                .FirstOrDefaultAsync(
+                    x => x.Id == id,
+                    cancellationToken);
+        }
 
-            await _driverRepository.AddAsync(driver);
+        public async Task<List<Driver>> GetAllAsync(
+            CancellationToken cancellationToken = default)
+        {
+            return await _context.Drivers
+                .ToListAsync(cancellationToken);
+        }
 
-            await _driverRepository.SaveChangesAsync();
+        public async Task AddAsync(
+            Driver driver,
+            CancellationToken cancellationToken = default)
+        {
+            await _context.Drivers.AddAsync(
+                driver,
+                cancellationToken);
+        }
 
-            return driver.Id;
+        public void Update(Driver driver)
+        {
+            _context.Drivers.Update(driver);
+        }
+
+        public void Delete(Driver driver)
+        {
+            _context.Drivers.Remove(driver);
+        }
+
+        public async Task<bool> ExistsAsync(
+            Guid id,
+            CancellationToken cancellationToken = default)
+        {
+            return await _context.Drivers
+                .AnyAsync(x => x.Id == id, cancellationToken);
+        }
+
+        public async Task SaveChangesAsync(
+            CancellationToken cancellationToken = default)
+        {
+            await _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

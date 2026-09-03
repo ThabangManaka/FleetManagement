@@ -1,24 +1,29 @@
 ﻿using Fleet.Core.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Fleet.Application
+namespace Fleet.Application.Interfaces
 {
     public interface IDriverRepository
     {
-        Task<Driver?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+        Task<Driver?> GetByIdAsync(
+            Guid id,
+            CancellationToken cancellationToken = default);
 
-        Task<List<Driver>> GetAllAsync();
+        Task<List<Driver>> GetAllAsync(
+            CancellationToken cancellationToken = default);
 
-        Task AddAsync(Driver driver, CancellationToken cancellationToken);
+        Task AddAsync(
+            Driver driver,
+            CancellationToken cancellationToken = default);
 
         void Update(Driver driver);
 
         void Delete(Driver driver);
 
-        Task<bool> ExistsAsync(Guid id);
+        Task<bool> ExistsAsync(
+            Guid id,
+            CancellationToken cancellationToken = default);
 
-        Task SaveChangesAsync();
+        Task SaveChangesAsync(
+            CancellationToken cancellationToken = default);
     }
 }

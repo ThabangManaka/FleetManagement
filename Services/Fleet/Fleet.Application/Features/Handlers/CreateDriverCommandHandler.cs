@@ -33,7 +33,8 @@ namespace Fleet.Application.Features.Handlers
                 driver,
                 cancellationToken);
 
-            await _driverRepository.SaveChangesAsync();
+            await _driverRepository.SaveChangesAsync(
+                cancellationToken);
 
             return driver.Id;
         }
