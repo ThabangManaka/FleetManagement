@@ -1,9 +1,7 @@
-using static Fleet.Core.Entities.Driver;
+using Fleet.Core.Entities;
 
 namespace Fleet.Application.Interfaces;
 
-public partial interface IVehicleRepository
-{
     public interface IMaintenanceRepository
     {
         Task<Maintenance?> GetByIdAsync(
@@ -28,4 +26,3 @@ public partial interface IVehicleRepository
         Task SaveChangesAsync(
             CancellationToken cancellationToken = default);
     }
-}

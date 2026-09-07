@@ -1,7 +1,7 @@
-﻿using Fleet.Infrastructure.Persistence;
+﻿using Fleet.Application.Interfaces;
+using Fleet.Core.Entities;
+using Fleet.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using static Fleet.Application.Interfaces.IVehicleRepository;
-using static Fleet.Core.Entities.Driver;
 
 namespace Fleet.Infrastructure.Repositories
 {

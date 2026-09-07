@@ -8,4 +8,4 @@ public record UpdateMaintenanceRequest(
         decimal Cost,
         string? Notes,
         MaintenanceStatus Status);
-}
+

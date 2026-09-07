@@ -12,4 +12,3 @@ public record MaintenanceResponse(
      MaintenanceStatus Status,
      DateTime CreatedAt,
      DateTime? UpdatedAt);
-}

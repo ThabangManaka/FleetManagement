@@ -2,9 +2,6 @@ using Fleet.Core.Enums;
 
 namespace Fleet.Core.Entities;
 
-
-    public partial class Driver
-    {
     public class Maintenance
     {
         public Guid Id { get; private set; }
@@ -73,4 +70,4 @@ namespace Fleet.Core.Entities;
             UpdatedAt = DateTime.UtcNow;
         }
     }
-}
+
