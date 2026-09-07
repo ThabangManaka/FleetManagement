@@ -2,7 +2,7 @@ using Fleet.Core.Entities;
 
 namespace Fleet.Application.Interfaces;
 
-public interface IVehicleRepository
+public partial interface IVehicleRepository
 {
     Task<Vehicle?> GetByIdAsync(
         Guid id,
