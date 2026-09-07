@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
+using static Fleet.Application.Interfaces.IVehicleRepository;
 
 
 namespace Fleet.Infrastructure
@@ -25,6 +26,7 @@ namespace Fleet.Infrastructure
             services.AddScoped<IVehicleRepository, VehicleRepository>();
             services.AddScoped<IDriverRepository, DriverRepository>();
             services.AddScoped< IVehicleAssignmentRepository,VehicleAssignmentRepository>();
+            services.AddScoped<IMaintenanceRepository, MaintenanceRepository>();
 
             return services;
         }
