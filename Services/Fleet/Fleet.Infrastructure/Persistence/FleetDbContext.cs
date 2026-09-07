@@ -1,5 +1,6 @@
 using Fleet.Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using static Fleet.Core.Entities.Driver;
 
 namespace Fleet.Infrastructure.Persistence;
 
@@ -16,6 +17,8 @@ public class FleetDbContext : DbContext
 
     public DbSet<VehicleAssignment> VehicleAssignments
     => Set<VehicleAssignment>();
+
+    public DbSet<Maintenance> Maintenances { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {  
@@ -53,5 +56,31 @@ public class FleetDbContext : DbContext
             entity.Property(x => x.UnassignedAt)
                 .IsRequired(false);
         });
+
+        modelBuilder.Entity<Maintenance>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.MaintenanceType)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            entity.Property(x => x.Description)
+                .IsRequired()
+                .HasMaxLength(500);
+
+            entity.Property(x => x.Cost)
+                .HasPrecision(18, 2);
+
+            entity.Property(x => x.Notes)
+                .HasMaxLength(1000);
+
+            entity.HasOne<Vehicle>()
+                .WithMany()
+                .HasForeignKey(x => x.VehicleId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+
     }
 }
