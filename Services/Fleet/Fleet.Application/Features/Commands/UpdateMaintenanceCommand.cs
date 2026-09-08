@@ -1,6 +1,5 @@
 ﻿using MediatR;
 
-using MediatR;
 
 namespace Fleet.Application.Features.Commands
 {
