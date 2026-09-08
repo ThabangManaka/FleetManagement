@@ -1,5 +1,4 @@
-﻿using Fleet.Application.Features.Commands;
-using Fleet.Application.Features.Vehicles.Commands.UnassignDriver;
+﻿using Fleet.Application.Features.Vehicles.Commands.UnassignDriver;
 using MediatR;
 
 namespace Fleet.Application.Features.Handlers
