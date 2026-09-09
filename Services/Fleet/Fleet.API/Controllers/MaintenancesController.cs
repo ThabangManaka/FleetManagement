@@ -5,7 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Fleet.API.Controllers
 {
-    public class MaintenancesController : Controller
+    [ApiController]
+    [Route("api/[controller]")]
+    public class MaintenancesController : ControllerBase
     {
         private readonly IMediator _mediator;
 
