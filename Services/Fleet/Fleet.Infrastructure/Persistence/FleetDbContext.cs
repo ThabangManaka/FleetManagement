@@ -19,6 +19,7 @@ public class FleetDbContext : DbContext
     => Set<VehicleAssignment>();
 
     public DbSet<Maintenance> Maintenances { get; set; }
+    public DbSet<Trip> Trips { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {  
@@ -79,6 +80,33 @@ public class FleetDbContext : DbContext
                 .WithMany()
                 .HasForeignKey(x => x.VehicleId)
                 .OnDelete(DeleteBehavior.Cascade);
+        });
+
+
+        modelBuilder.Entity<Trip>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.StartLocation)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            entity.Property(x => x.Destination)
+                .IsRequired()
+                .HasMaxLength(200);
+
+            entity.Property(x => x.Notes)
+                .HasMaxLength(1000);
+
+            entity.HasOne<Vehicle>()
+                .WithMany()
+                .HasForeignKey(x => x.VehicleId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne<Driver>()
+                .WithMany()
+                .HasForeignKey(x => x.DriverId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
 
