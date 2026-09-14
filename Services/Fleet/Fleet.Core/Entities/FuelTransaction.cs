@@ -1,8 +1,7 @@
 namespace Fleet.Core.Entities;
 
 
-public partial class Driver
-{
+
     public class FuelTransaction
     {
         public Guid Id { get; private set; }
@@ -102,4 +101,3 @@ public partial class Driver
             UpdatedAt = DateTime.UtcNow;
         }
     }
-}

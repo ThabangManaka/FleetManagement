@@ -1,4 +1,4 @@
-using static Fleet.Core.Entities.Driver;
+using Fleet.Core.Entities;
 
 namespace Fleet.Application.Interfaces;
 
