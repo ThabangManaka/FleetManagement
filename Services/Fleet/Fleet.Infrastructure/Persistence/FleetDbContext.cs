@@ -21,6 +21,8 @@ public class FleetDbContext : DbContext
     public DbSet<Maintenance> Maintenances { get; set; }
     public DbSet<Trip> Trips { get; set; }
 
+    public DbSet<FuelTransaction> FuelTransactions { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {  
 
@@ -106,6 +108,38 @@ public class FleetDbContext : DbContext
             entity.HasOne<Driver>()
                 .WithMany()
                 .HasForeignKey(x => x.DriverId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<FuelTransaction>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.Property(x => x.FuelType)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            entity.Property(x => x.FuelStation)
+                .HasMaxLength(200);
+
+            entity.Property(x => x.ReceiptNumber)
+                .HasMaxLength(100);
+
+            entity.Property(x => x.Notes)
+                .HasMaxLength(1000);
+
+            entity.Property(x => x.Litres)
+                .HasPrecision(18, 3);
+
+            entity.Property(x => x.PricePerLitre)
+                .HasPrecision(18, 2);
+
+            entity.Property(x => x.TotalCost)
+                .HasPrecision(18, 2);
+
+            entity.HasOne<Vehicle>()
+                .WithMany()
+                .HasForeignKey(x => x.VehicleId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
 
