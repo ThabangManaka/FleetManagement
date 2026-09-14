@@ -4,14 +4,14 @@ using FluentValidation;
 
 namespace Fleet.Application.Features.FuelTransactions.Validators
 {
-    public class CreateFuelTransactionCommandValidator
-           : AbstractValidator<CreateFuelTransactionCommand>
+    public class UpdateFuelTransactionCommandValidator
+        : AbstractValidator<UpdateFuelTransactionCommand>
     {
-        public CreateFuelTransactionCommandValidator()
+        public UpdateFuelTransactionCommandValidator()
         {
-            RuleFor(x => x.Request.VehicleId)
+            RuleFor(x => x.Id)
                 .NotEmpty()
-                .WithMessage("Vehicle ID is required.");
+                .WithMessage("Fuel transaction ID is required.");
 
             RuleFor(x => x.Request.TransactionDate)
                 .NotEmpty()
@@ -48,7 +48,7 @@ namespace Fleet.Application.Features.FuelTransactions.Validators
             RuleFor(x => x.Request.Notes)
                 .MaximumLength(1000)
                 .When(x => x.Request.Notes != null)
-                .WithMessage("Notes cannot exceed 100 characters.");
+                .WithMessage("Notes cannot exceed 1000 characters.");
         }
     }
 }
