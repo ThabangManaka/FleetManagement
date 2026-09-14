@@ -28,6 +28,7 @@ namespace Fleet.Infrastructure
             services.AddScoped< IVehicleAssignmentRepository,VehicleAssignmentRepository>();
             services.AddScoped<IMaintenanceRepository, MaintenanceRepository>();
             services.AddScoped<ITripRepository, TripRepository>();
+            services.AddScoped<IFuelTransactionRepository, FuelTransactionRepository>();
 
             return services;
         }
