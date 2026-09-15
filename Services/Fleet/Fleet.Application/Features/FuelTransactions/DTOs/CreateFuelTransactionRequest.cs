@@ -13,3 +13,4 @@ namespace Fleet.Application.Features.FuelTransactions.DTOs
          string? ReceiptNumber,
          string? Notes);
 }
+}
