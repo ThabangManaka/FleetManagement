@@ -15,6 +15,10 @@ public interface IFuelTransactionRepository
         FuelTransaction fuelTransaction,
         CancellationToken cancellationToken = default);
 
+    Task<List<FuelTransaction>> GetByVehicleIdAsync(
+    Guid vehicleId,
+    CancellationToken cancellationToken = default);
+
     void Update(FuelTransaction fuelTransaction);
 
     void Delete(FuelTransaction fuelTransaction);
