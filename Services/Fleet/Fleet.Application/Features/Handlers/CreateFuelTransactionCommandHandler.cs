@@ -35,11 +35,11 @@ namespace Fleet.Application.Features.Handlers
                     $"Vehicle with ID '{command.Request.VehicleId}' was not found.");
             }
 
-            if (command.Request.Mileage < vehicle.Mileage)
+            if (command.Request.Mileage <= vehicle.Mileage)
             {
                 throw new InvalidOperationException(
                     $"Fuel transaction mileage ({command.Request.Mileage}) " +
-                    $"cannot be less than the vehicle's current mileage ({vehicle.Mileage}).");
+                    $"must be greater than the vehicle's current mileage ({vehicle.Mileage}).");
             }
 
             var fuelTransaction = new FuelTransaction(
@@ -56,6 +56,8 @@ namespace Fleet.Application.Features.Handlers
             await _fuelRepository.AddAsync(
                 fuelTransaction,
                 cancellationToken);
+
+            vehicle.UpdateMileage(command.Request.Mileage);
 
             await _fuelRepository.SaveChangesAsync(
                 cancellationToken);

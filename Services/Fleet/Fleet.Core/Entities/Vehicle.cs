@@ -69,4 +69,13 @@ public partial class Vehicle
         Mileage = mileage;
         UpdatedAt = DateTime.UtcNow;
     }
+
+    public void UpdateMileage(int mileage)
+    {
+        if (mileage > Mileage)
+        {
+            Mileage = mileage;
+            UpdatedAt = DateTime.UtcNow;
+        }
     }
+}

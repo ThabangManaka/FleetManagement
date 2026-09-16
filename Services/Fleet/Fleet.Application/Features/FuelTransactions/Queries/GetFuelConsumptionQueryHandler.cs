@@ -48,8 +48,12 @@ namespace Fleet.Application.Features.FuelTransactions.Queries
 
             var distanceTravelled = lastMileage - firstMileage;
 
-            var fuelEfficiency = totalLitres > 0
-                ? distanceTravelled / totalLitres
+            var fuelConsumed = transactions
+            .Skip(1)
+            .Sum(x => x.Litres);
+
+            var fuelEfficiency = fuelConsumed > 0
+                ? distanceTravelled / fuelConsumed
                 : 0;
 
             return new FuelConsumptionResponse(
