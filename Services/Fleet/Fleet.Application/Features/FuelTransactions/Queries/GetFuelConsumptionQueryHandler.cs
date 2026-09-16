@@ -34,6 +34,7 @@ namespace Fleet.Application.Features.FuelTransactions.Queries
                     0,
                     0,
                     0,
+                    0,
                     0);
             }
 
@@ -61,6 +62,8 @@ namespace Fleet.Application.Features.FuelTransactions.Queries
             ? totalFuelCost / distanceTravelled
             : 0;
 
+            var fuelCostPer100Km = costPerKilometre * 100;
+
             return new FuelConsumptionResponse(
                 query.VehicleId,
                 transactions.Count,
@@ -69,7 +72,8 @@ namespace Fleet.Application.Features.FuelTransactions.Queries
                 averagePricePerLitre,
                 distanceTravelled,
                 fuelEfficiency,
-                 costPerKilometre);
+                 costPerKilometre,
+                 fuelCostPer100Km);
         }
     }
 }

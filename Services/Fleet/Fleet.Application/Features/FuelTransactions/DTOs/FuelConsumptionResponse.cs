@@ -10,6 +10,7 @@ namespace Fleet.Application.Features.FuelTransactions.DTOs
         decimal AveragePricePerLitre,
         int DistanceTravelled,
         decimal FuelEfficiency,
-        decimal CostPerKilometre);
+        decimal CostPerKilometre,
+        decimal FuelCostPer100Km);
 
 }
