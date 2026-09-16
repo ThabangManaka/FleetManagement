@@ -6,7 +6,7 @@ using MediatR;
 namespace Fleet.Application.Features.FuelTransactions.Queries
 {
     public class GetFuelConsumptionQueryHandler
-           : IRequestHandler<GetFuelConsumptionQuery, FuelConsumptionResponse>
+        : IRequestHandler<GetFuelConsumptionQuery, FuelConsumptionResponse>
     {
         private readonly IFuelTransactionRepository _fuelRepository;
 
@@ -26,8 +26,14 @@ namespace Fleet.Application.Features.FuelTransactions.Queries
 
             if (transactions.Count == 0)
             {
-                throw new KeyNotFoundException(
-                    $"No fuel transactions were found for vehicle '{query.VehicleId}'.");
+                return new FuelConsumptionResponse(
+                    query.VehicleId,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0);
             }
 
             var totalLitres = transactions.Sum(x => x.Litres);

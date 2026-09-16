@@ -35,6 +35,13 @@ namespace Fleet.Application.Features.Handlers
                     $"Vehicle with ID '{command.Request.VehicleId}' was not found.");
             }
 
+            if (command.Request.Mileage < vehicle.Mileage)
+            {
+                throw new InvalidOperationException(
+                    $"Fuel transaction mileage ({command.Request.Mileage}) " +
+                    $"cannot be less than the vehicle's current mileage ({vehicle.Mileage}).");
+            }
+
             var fuelTransaction = new FuelTransaction(
                 command.Request.VehicleId,
                 command.Request.TransactionDate,

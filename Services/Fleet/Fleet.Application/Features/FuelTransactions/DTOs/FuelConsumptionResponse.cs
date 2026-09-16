@@ -10,5 +10,5 @@ namespace Fleet.Application.Features.FuelTransactions.DTOs
     decimal AveragePricePerLitre,
     int DistanceTravelled,
     decimal FuelEfficiency);
-}
+
 }

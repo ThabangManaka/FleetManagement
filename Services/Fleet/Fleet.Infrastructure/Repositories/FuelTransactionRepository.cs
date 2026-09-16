@@ -43,6 +43,15 @@ namespace Fleet.Infrastructure.Repositories
                 fuelTransaction,
                 cancellationToken);
         }
+        public async Task<List<FuelTransaction>> GetByVehicleIdAsync(
+         Guid vehicleId,
+        CancellationToken cancellationToken = default)
+        {
+            return await _context.FuelTransactions
+                .Where(x => x.VehicleId == vehicleId)
+                .OrderBy(x => x.Mileage)
+                .ToListAsync(cancellationToken);
+        }
 
         public void Update(FuelTransaction fuelTransaction)
         {
@@ -53,6 +62,7 @@ namespace Fleet.Infrastructure.Repositories
         {
             _context.FuelTransactions.Remove(fuelTransaction);
         }
+
 
         public async Task<bool> ExistsAsync(
             Guid id,
