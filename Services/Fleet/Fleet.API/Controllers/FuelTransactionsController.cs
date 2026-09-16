@@ -51,6 +51,16 @@ namespace Fleet.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("vehicle/{vehicleId:guid}/consumption")]
+        public async Task<IActionResult> GetFuelConsumption(Guid vehicleId)
+        {
+            var query = new GetFuelConsumptionQuery(vehicleId);
+
+            var result = await _mediator.Send(query);
+
+            return Ok(result);
+        }
+
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(
             Guid id,
