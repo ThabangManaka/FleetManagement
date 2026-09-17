@@ -70,7 +70,7 @@ public partial class Vehicle
         UpdatedAt = DateTime.UtcNow;
     }
 
-    public void UpdateMileage(int mileage)
+    public void UpdateMileage(decimal mileage)
     {
         if (mileage > Mileage)
         {

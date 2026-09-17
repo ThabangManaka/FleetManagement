@@ -8,7 +8,7 @@ namespace Fleet.Application.Features.FuelTransactions.DTOs
       string Make,
       string Model,
       string Status,
-      int CurrentMileage,
+      decimal CurrentMileage,
       int TotalFuelTransactions,
       decimal TotalFuelCost,
       decimal FuelEfficiency,

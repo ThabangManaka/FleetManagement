@@ -2,7 +2,7 @@
 using MediatR;
 
 
-namespace Fleet.Application.Features.Vehicles.Queries.GetVehicle
+namespace Fleet.Application.Features.Vehicles.Queries.GetVehicleSummary
 {
     public record GetVehicleSummaryQuery(
      Guid VehicleId
