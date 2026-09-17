@@ -1,6 +1,7 @@
 ﻿using Fleet.Application.Features.Vehicles.Commands;
 using Fleet.Application.Features.Vehicles.Queries.GetVehicle;
 using Fleet.Application.Features.Vehicles.Queries.GetVehicles;
+using Fleet.Application.Features.Vehicles.Queries.GetVehicleSummary;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -28,7 +29,7 @@ namespace Fleet.API.Controllers
 
             return CreatedAtAction(
                 nameof(GetById),
-                new { id = result.Id},
+                new { id = result.Id },
                 result);
         }
 
@@ -56,6 +57,17 @@ namespace Fleet.API.Controllers
             {
                 return NotFound();
             }
+
+            return Ok(result);
+        }
+        [HttpGet("{vehicleId:guid}/summary")]
+        public async Task<IActionResult> GetSummary(
+        Guid vehicleId,
+        CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(
+                new GetVehicleSummaryQuery(vehicleId),
+                cancellationToken);
 
             return Ok(result);
         }
