@@ -3,8 +3,8 @@
     public class MaintenanceRecord
     {
         public Guid Id { get; private set; }
-
         public Guid VehicleId { get; private set; }
+        public Vehicle Vehicle { get; private set; } = null!;
 
         public DateTime MaintenanceDate { get; private set; }
 

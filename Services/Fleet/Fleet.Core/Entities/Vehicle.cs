@@ -26,6 +26,9 @@ public partial class Vehicle
 
     public DateTime? UpdatedAt { get; private set; }
 
+    public ICollection<MaintenanceRecord> MaintenanceRecords { get; private set; }
+    = new List<MaintenanceRecord>();
+
     private Vehicle()
     {
     }

@@ -44,4 +44,6 @@ public partial class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
         builder.Property(x => x.Status)
             .HasMaxLength(50)
             .IsRequired();
+
     }
+}

@@ -33,5 +33,11 @@ namespace Fleet.Infrastructure.Persistence.Configurations;
                 .IsRequired();
 
             builder.HasIndex(x => x.VehicleId);
-        }
+
+            builder.HasOne(x => x.Vehicle)
+                 .WithMany(x => x.MaintenanceRecords)
+                 .HasForeignKey(x => x.VehicleId)
+                 .OnDelete(DeleteBehavior.Cascade);
+
+    }
     }
