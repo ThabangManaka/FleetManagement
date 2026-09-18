@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Fleet.Infrastructure.Persistence.Configurations;
 
-public class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
+public partial class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
 {
     public void Configure(EntityTypeBuilder<Vehicle> builder)
     {
@@ -45,4 +45,3 @@ public class VehicleConfiguration : IEntityTypeConfiguration<Vehicle>
             .HasMaxLength(50)
             .IsRequired();
     }
-}
