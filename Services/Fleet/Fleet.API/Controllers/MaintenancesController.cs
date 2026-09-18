@@ -59,6 +59,18 @@ namespace Fleet.API.Controllers
             return Ok(result);
         }
 
+        [HttpGet("vehicle/{vehicleId:guid}")]
+        public async Task<IActionResult> GetByVehicle(
+        Guid vehicleId,
+        CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(
+                new GetMaintenancesByVehicleQuery(vehicleId),
+                cancellationToken);
+
+            return Ok(result);
+        }
+
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(
             Guid id,

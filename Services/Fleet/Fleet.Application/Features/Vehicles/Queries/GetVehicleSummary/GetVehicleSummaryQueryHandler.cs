@@ -5,17 +5,20 @@ using MediatR;
 namespace Fleet.Application.Features.Vehicles.Queries.GetVehicleSummary
 {
     public class GetVehicleSummaryQueryHandler
-       : IRequestHandler<GetVehicleSummaryQuery, VehicleSummaryResponse>
+           : IRequestHandler<GetVehicleSummaryQuery, VehicleSummaryResponse>
     {
         private readonly IVehicleRepository _vehicleRepository;
         private readonly IFuelTransactionRepository _fuelRepository;
+        private readonly IMaintenanceRepository _maintenanceRepository;
 
         public GetVehicleSummaryQueryHandler(
             IVehicleRepository vehicleRepository,
-            IFuelTransactionRepository fuelRepository)
+            IFuelTransactionRepository fuelRepository,
+            IMaintenanceRepository maintenanceRepository)
         {
             _vehicleRepository = vehicleRepository;
             _fuelRepository = fuelRepository;
+            _maintenanceRepository = maintenanceRepository;
         }
 
         public async Task<VehicleSummaryResponse> Handle(
@@ -36,6 +39,11 @@ namespace Fleet.Application.Features.Vehicles.Queries.GetVehicleSummary
                 query.VehicleId,
                 cancellationToken);
 
+            var maintenances = await _maintenanceRepository.GetByVehicleIdAsync(
+                query.VehicleId,
+                cancellationToken);
+
+            // Fuel summary
             var totalFuelTransactions = transactions.Count;
 
             var totalFuelCost = transactions.Sum(x => x.TotalCost);
@@ -72,6 +80,17 @@ namespace Fleet.Application.Features.Vehicles.Queries.GetVehicleSummary
                 }
             }
 
+            // Maintenance summary
+            var totalMaintenanceRecords = maintenances.Count;
+
+            var totalMaintenanceCost = maintenances.Sum(
+                x => x.Cost);
+
+            DateTime? lastMaintenanceDate = maintenances
+                .OrderByDescending(x => x.ServiceDate)
+                .Select(x => (DateTime?)x.ServiceDate)
+                .FirstOrDefault();
+
             return new VehicleSummaryResponse(
                 vehicle.Id,
                 vehicle.RegistrationNumber,
@@ -82,7 +101,10 @@ namespace Fleet.Application.Features.Vehicles.Queries.GetVehicleSummary
                 totalFuelTransactions,
                 totalFuelCost,
                 fuelEfficiency,
-                fuelCostPer100Km);
+                fuelCostPer100Km,
+                totalMaintenanceRecords,
+                totalMaintenanceCost,
+                lastMaintenanceDate);
         }
     }
 }
