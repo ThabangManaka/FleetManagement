@@ -32,6 +32,15 @@ namespace Fleet.Infrastructure.Repositories
                 .ToListAsync(cancellationToken);
         }
 
+        public async Task<List<Maintenance>> GetByVehicleIdAsync(
+        Guid vehicleId,
+        CancellationToken cancellationToken = default)
+        {
+            return await _context.Maintenances
+                .Where(x => x.VehicleId == vehicleId)
+                .OrderByDescending(x => x.ServiceDate)
+                .ToListAsync(cancellationToken);
+        }
         public async Task AddAsync(
             Maintenance maintenance,
             CancellationToken cancellationToken = default)

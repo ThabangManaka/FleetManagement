@@ -19,9 +19,13 @@ namespace Fleet.Application.Interfaces;
 
         void Delete(Maintenance maintenance);
 
+        Task<List<Maintenance>> GetByVehicleIdAsync(
+        Guid vehicleId,
+        CancellationToken cancellationToken = default);
+
         Task<bool> ExistsAsync(
-            Guid id,
-            CancellationToken cancellationToken = default);
+                Guid id,
+                CancellationToken cancellationToken = default);
 
         Task SaveChangesAsync(
             CancellationToken cancellationToken = default);
