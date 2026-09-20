@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Fleet.Application.Features.Vehicles.DTOs;
+using MediatR;
+
 
 namespace Fleet.Application.Features.Vehicles.Queries.GetVehiclePerformance
 {
-    internal class GetVehiclePerformanceQuery
-    {
-    }
+    public record GetVehiclePerformanceQuery(
+       Guid VehicleId
+   ) : IRequest<VehiclePerformanceResponse>;
 }
