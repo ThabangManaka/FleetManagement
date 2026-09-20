@@ -30,36 +30,23 @@ namespace Fleet.Application.Features.FleetDashboard.Queries.GetFleetDashboard
         }
 
         public async Task<FleetDashboardResponse> Handle(
-            GetFleetDashboardQuery query,
-            CancellationToken cancellationToken)
+    GetFleetDashboardQuery query,
+    CancellationToken cancellationToken)
         {
-            var vehiclesTask =
-                _vehicleRepository.GetAllAsync(cancellationToken);
+            var vehicles = await _vehicleRepository.GetAllAsync(
+                cancellationToken);
 
-            var driversTask =
-                _driverRepository.GetAllAsync(cancellationToken);
+            var drivers = await _driverRepository.GetAllAsync(
+                cancellationToken);
 
-            var fuelTransactionsTask =
-                _fuelRepository.GetAllAsync(cancellationToken);
+            var fuelTransactions = await _fuelRepository.GetAllAsync(
+                cancellationToken);
 
-            var maintenancesTask =
-                _maintenanceRepository.GetAllAsync(cancellationToken);
+            var maintenances = await _maintenanceRepository.GetAllAsync(
+                cancellationToken);
 
-            var tripsTask =
-                _tripRepository.GetAllAsync(cancellationToken);
-
-            await Task.WhenAll(
-                vehiclesTask,
-                driversTask,
-                fuelTransactionsTask,
-                maintenancesTask,
-                tripsTask);
-
-            var vehicles = await vehiclesTask;
-            var drivers = await driversTask;
-            var fuelTransactions = await fuelTransactionsTask;
-            var maintenances = await maintenancesTask;
-            var trips = await tripsTask;
+            var trips = await _tripRepository.GetAllAsync(
+                cancellationToken);
 
             var totalVehicles = vehicles.Count;
 
@@ -86,8 +73,8 @@ namespace Fleet.Application.Features.FleetDashboard.Queries.GetFleetDashboard
             var totalTrips = trips.Count;
 
             var totalDistanceTravelled = trips
-               .Where(x => x.EndMileage.HasValue)
-               .Sum(x => x.EndMileage!.Value - x.StartMileage);
+                 .Where(x => x.EndMileage.HasValue)
+                 .Sum(x => x.EndMileage!.Value - x.StartMileage);
 
             return new FleetDashboardResponse(
                 totalVehicles,
