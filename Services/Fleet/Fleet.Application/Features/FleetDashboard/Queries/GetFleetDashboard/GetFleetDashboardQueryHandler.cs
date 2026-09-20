@@ -69,6 +69,18 @@ namespace Fleet.Application.Features.FleetDashboard.Queries.GetFleetDashboard
 
             var totalMaintenanceCost = maintenances.Sum(x =>
                 x.Cost);
+            var totalOperatingCost =
+                totalFuelCost + totalMaintenanceCost;
+
+            var averageFuelCostPerVehicle =
+                totalVehicles > 0
+                    ? totalFuelCost / totalVehicles
+                    : 0;
+
+            var averageMaintenanceCostPerVehicle =
+                totalVehicles > 0
+                    ? totalMaintenanceCost / totalVehicles
+                    : 0;
 
             var totalTrips = trips.Count;
 
@@ -76,17 +88,26 @@ namespace Fleet.Application.Features.FleetDashboard.Queries.GetFleetDashboard
                  .Where(x => x.EndMileage.HasValue)
                  .Sum(x => x.EndMileage!.Value - x.StartMileage);
 
+            var averageDistancePerTrip =
+                totalTrips > 0
+                    ? totalDistanceTravelled / totalTrips
+                    : 0;
+
             return new FleetDashboardResponse(
-                totalVehicles,
-                availableVehicles,
-                assignedVehicles,
-                vehiclesInMaintenance,
-                totalDrivers,
-                activeDrivers,
-                totalFuelCost,
-                totalMaintenanceCost,
-                totalTrips,
-                totalDistanceTravelled);
+         totalVehicles,
+         availableVehicles,
+         assignedVehicles,
+         vehiclesInMaintenance,
+         totalDrivers,
+         activeDrivers,
+         totalFuelCost,
+         totalMaintenanceCost,
+         totalOperatingCost,
+         averageFuelCostPerVehicle,
+         averageMaintenanceCostPerVehicle,
+         totalTrips,
+         totalDistanceTravelled,
+         averageDistancePerTrip);
         }
     }
 }
