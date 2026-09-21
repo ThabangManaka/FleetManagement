@@ -17,10 +17,12 @@ namespace Fleet.API.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetDashboard(
-            CancellationToken cancellationToken)
+       [FromQuery] DateTime? from,
+       [FromQuery] DateTime? to,
+       CancellationToken cancellationToken)
         {
             var result = await _mediator.Send(
-                new GetFleetDashboardQuery(),
+                new GetFleetDashboardQuery(from, to),
                 cancellationToken);
 
             return Ok(result);

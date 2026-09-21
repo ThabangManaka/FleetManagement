@@ -7,7 +7,7 @@ using MediatR;
 namespace Fleet.Application.Features.FleetDashboard.Queries.GetFleetDashboard
 {
     public class GetFleetDashboardQueryHandler
-        : IRequestHandler<GetFleetDashboardQuery, FleetDashboardResponse>
+         : IRequestHandler<GetFleetDashboardQuery, FleetDashboardResponse>
     {
         private readonly IVehicleRepository _vehicleRepository;
         private readonly IDriverRepository _driverRepository;
@@ -30,9 +30,17 @@ namespace Fleet.Application.Features.FleetDashboard.Queries.GetFleetDashboard
         }
 
         public async Task<FleetDashboardResponse> Handle(
-    GetFleetDashboardQuery query,
-    CancellationToken cancellationToken)
+            GetFleetDashboardQuery query,
+            CancellationToken cancellationToken)
         {
+            if (query.From.HasValue &&
+                query.To.HasValue &&
+                query.From.Value > query.To.Value)
+            {
+                throw new ArgumentException(
+                    "The 'From' date cannot be later than the 'To' date.");
+            }
+
             var vehicles = await _vehicleRepository.GetAllAsync(
                 cancellationToken);
 
@@ -47,6 +55,39 @@ namespace Fleet.Application.Features.FleetDashboard.Queries.GetFleetDashboard
 
             var trips = await _tripRepository.GetAllAsync(
                 cancellationToken);
+
+            // Apply date filters only when dates are supplied.
+            if (query.From.HasValue)
+            {
+                fuelTransactions = fuelTransactions
+                    .Where(x => x.CreatedAt >= query.From.Value)
+                    .ToList();
+
+                maintenances = maintenances
+                    .Where(x => x.ServiceDate >= query.From.Value)
+                    .ToList();
+
+                trips = trips
+                    .Where(x => x.StartDate >= query.From.Value)
+                    .ToList();
+            }
+
+            if (query.To.HasValue)
+            {
+                var toDate = query.To.Value.Date.AddDays(1);
+
+                fuelTransactions = fuelTransactions
+                    .Where(x => x.CreatedAt < toDate)
+                    .ToList();
+
+                maintenances = maintenances
+                    .Where(x => x.ServiceDate < toDate)
+                    .ToList();
+
+                trips = trips
+                    .Where(x => x.StartDate < toDate)
+                    .ToList();
+            }
 
             var totalVehicles = vehicles.Count;
 
@@ -64,11 +105,12 @@ namespace Fleet.Application.Features.FleetDashboard.Queries.GetFleetDashboard
             var activeDrivers = drivers.Count(x =>
                 x.Status == DriverStatus.Active);
 
-            var totalFuelCost = fuelTransactions.Sum(x =>
-                x.TotalCost);
+            var totalFuelCost = fuelTransactions.Sum(
+                x => x.TotalCost);
 
-            var totalMaintenanceCost = maintenances.Sum(x =>
-                x.Cost);
+            var totalMaintenanceCost = maintenances.Sum(
+                x => x.Cost);
+
             var totalOperatingCost =
                 totalFuelCost + totalMaintenanceCost;
 
@@ -85,8 +127,9 @@ namespace Fleet.Application.Features.FleetDashboard.Queries.GetFleetDashboard
             var totalTrips = trips.Count;
 
             var totalDistanceTravelled = trips
-                 .Where(x => x.EndMileage.HasValue)
-                 .Sum(x => x.EndMileage!.Value - x.StartMileage);
+                .Where(x => x.EndMileage.HasValue)
+                .Sum(x =>
+                    x.EndMileage!.Value - x.StartMileage);
 
             var averageDistancePerTrip =
                 totalTrips > 0
@@ -94,20 +137,20 @@ namespace Fleet.Application.Features.FleetDashboard.Queries.GetFleetDashboard
                     : 0;
 
             return new FleetDashboardResponse(
-         totalVehicles,
-         availableVehicles,
-         assignedVehicles,
-         vehiclesInMaintenance,
-         totalDrivers,
-         activeDrivers,
-         totalFuelCost,
-         totalMaintenanceCost,
-         totalOperatingCost,
-         averageFuelCostPerVehicle,
-         averageMaintenanceCostPerVehicle,
-         totalTrips,
-         totalDistanceTravelled,
-         averageDistancePerTrip);
+                totalVehicles,
+                availableVehicles,
+                assignedVehicles,
+                vehiclesInMaintenance,
+                totalDrivers,
+                activeDrivers,
+                totalFuelCost,
+                totalMaintenanceCost,
+                totalOperatingCost,
+                averageFuelCostPerVehicle,
+                averageMaintenanceCostPerVehicle,
+                totalTrips,
+                totalDistanceTravelled,
+                averageDistancePerTrip);
         }
     }
 }
