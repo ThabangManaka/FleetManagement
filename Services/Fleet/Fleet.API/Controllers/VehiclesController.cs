@@ -1,5 +1,6 @@
 ﻿using Fleet.Application.Features.Vehicles.Commands;
 using Fleet.Application.Features.Vehicles.Queries.GetVehicle;
+using Fleet.Application.Features.Vehicles.Queries.GetVehiclePerformance;
 using Fleet.Application.Features.Vehicles.Queries.GetVehicles;
 using Fleet.Application.Features.Vehicles.Queries.GetVehicleSummary;
 using MediatR;
@@ -67,6 +68,18 @@ namespace Fleet.API.Controllers
         {
             var result = await _mediator.Send(
                 new GetVehicleSummaryQuery(vehicleId),
+                cancellationToken);
+
+            return Ok(result);
+        }
+
+        [HttpGet("{id:guid}/performance")]
+        public async Task<IActionResult> GetPerformance(
+        Guid id,
+        CancellationToken cancellationToken)
+        {
+            var result = await _mediator.Send(
+                new GetVehiclePerformanceQuery(id),
                 cancellationToken);
 
             return Ok(result);
