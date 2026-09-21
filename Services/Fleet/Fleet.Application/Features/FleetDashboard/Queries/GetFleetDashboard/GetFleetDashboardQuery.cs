@@ -4,6 +4,8 @@ using MediatR;
 
 namespace Fleet.Application.Features.FleetDashboard.Queries.GetFleetDashboard
 {
-    public record GetFleetDashboardQuery
-        : IRequest<FleetDashboardResponse>;
+    public record GetFleetDashboardQuery(
+        DateTime? From,
+        DateTime? To
+    ) : IRequest<FleetDashboardResponse>;
 }
