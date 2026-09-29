@@ -2,10 +2,12 @@
 using Fleet.Application.Features.Vehicles.DTOs;
 using Fleet.Application.Interfaces;
 using Fleet.Core.Enums;
+using MediatR;
 
 namespace Fleet.Application.Features.Vehicles.Handlers
 {
     public class UpdateVehicleCommandHandler
+        : IRequestHandler<UpdateVehicleCommand, VehicleResponse>
     {
         private readonly IVehicleRepository _vehicleRepository;
 
@@ -15,9 +17,9 @@ namespace Fleet.Application.Features.Vehicles.Handlers
             _vehicleRepository = vehicleRepository;
         }
 
-        public async Task<VehicleResponse> HandleAsync(
-            UpdateVehicleCommand command,
-            CancellationToken cancellationToken = default)
+        public async Task<VehicleResponse> Handle(
+             UpdateVehicleCommand command,
+             CancellationToken cancellationToken)
         {
             var vehicle = await _vehicleRepository.GetByIdAsync(
                 command.Id,

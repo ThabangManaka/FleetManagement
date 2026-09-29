@@ -36,8 +36,20 @@ try
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
+    builder.Services.AddCors(options =>
+    {
+        options.AddPolicy("AngularClient", policy =>
+        {
+            policy
+                .WithOrigins("http://localhost:4200")
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+    });
 
     var app = builder.Build();
+
+    app.UseCors("AngularClient");
 
     app.UseExceptionHandler();
 
@@ -49,7 +61,7 @@ try
 
     Log.Information("Fleet API started successfully");
 
-    app.Run();
+app.Run();
 }
 catch (Exception ex)
 {
