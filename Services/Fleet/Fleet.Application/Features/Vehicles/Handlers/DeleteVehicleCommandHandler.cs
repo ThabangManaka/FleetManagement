@@ -1,9 +1,10 @@
 ﻿using Fleet.Application.Features.Vehicles.Commands;
 using Fleet.Application.Interfaces;
+using MediatR;
 
 namespace Fleet.Application.Features.Vehicles.Handlers
 {
-    public class DeleteVehicleCommandHandler
+    public class DeleteVehicleCommandHandler : IRequestHandler<DeleteVehicleCommand, Unit>
     {
         private readonly IVehicleRepository _vehicleRepository;
 
@@ -13,7 +14,7 @@ namespace Fleet.Application.Features.Vehicles.Handlers
             _vehicleRepository = vehicleRepository;
         }
 
-        public async Task HandleAsync(
+        public async Task<Unit> Handle(
             DeleteVehicleCommand command,
             CancellationToken cancellationToken = default)
         {
@@ -30,6 +31,9 @@ namespace Fleet.Application.Features.Vehicles.Handlers
             await _vehicleRepository.DeleteAsync(
                 vehicle,
                 cancellationToken);
+
+
+            return Unit.Value;
         }
     }
 }
