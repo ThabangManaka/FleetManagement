@@ -18,6 +18,8 @@ namespace Fleet.Application.Features.FleetDashboard.DTOs
         decimal AverageMaintenanceCostPerVehicle,
         int TotalTrips,
         decimal TotalDistanceTravelled,
-        decimal AverageDistancePerTrip
+        decimal AverageDistancePerTrip,
+        decimal VehicleUtilizationRate,
+        decimal VehicleMaintenanceRate
     );
 }

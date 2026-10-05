@@ -97,8 +97,18 @@ namespace Fleet.Application.Features.FleetDashboard.Queries.GetFleetDashboard
             var assignedVehicles = vehicles.Count(x =>
                 x.Status == VehicleStatus.Assigned);
 
+            var vehicleUtilizationRate =
+            totalVehicles > 0
+                ? (decimal)assignedVehicles / totalVehicles * 100
+                : 0;
+
             var vehiclesInMaintenance = vehicles.Count(x =>
                 x.Status == VehicleStatus.Maintenance);
+
+            var vehicleMaintenanceRate =
+            totalVehicles > 0
+                ? (decimal)vehiclesInMaintenance / totalVehicles * 100
+                : 0;
 
             var totalDrivers = drivers.Count;
 
@@ -150,7 +160,9 @@ namespace Fleet.Application.Features.FleetDashboard.Queries.GetFleetDashboard
                 averageMaintenanceCostPerVehicle,
                 totalTrips,
                 totalDistanceTravelled,
-                averageDistancePerTrip);
+                averageDistancePerTrip,
+                vehicleUtilizationRate,
+                vehicleMaintenanceRate);
         }
     }
 }
