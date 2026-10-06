@@ -1,11 +1,13 @@
-﻿using Moq;
+﻿using Fleet.Application.Features.FleetDashboard.DTOs;
+using Fleet.Application.Features.FleetDashboard.Queries.GetFleetDashboard;
+using Fleet.Application.Interfaces;
+using Fleet.Core.Entities;
+using Fleet.Core.Enums;
+using FluentAssertions;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Text;
-using FluentAssertions;
-using Fleet.Application.Features.FleetDashboard.Queries.GetFleetDashboard;
-using Fleet.Application.Features.FleetDashboard.DTOs;
-using Fleet.Application.Interfaces;
 
 namespace Fleet.Application.Tests.Features.FleetDashboard
 {
@@ -35,5 +37,57 @@ namespace Fleet.Application.Tests.Features.FleetDashboard
                 _maintenanceRepository.Object,
                 _tripRepository.Object);
         }
+            [Fact]
+            public async Task Handle_Should_Return_Total_Vehicle_Count()
+            {
+                // Arrange
+                _vehicleRepository
+                    .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(new List<Vehicle>
+                    {
+                      new Vehicle(
+                        "TEST001",
+                        "VIN001",
+                        "Toyota",
+                        "Hilux",
+                        2025,
+                        FuelType.Diesel),
+
+                    new Vehicle(
+                        "TEST002",
+                        "VIN002",
+                        "Ford",
+                        "Ranger",
+                        2026,
+                        FuelType.Diesel)
+                    });
+
+                _driverRepository
+                    .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(new List<Driver>());
+
+                _fuelRepository
+                    .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(new List<FuelTransaction>());
+
+                _maintenanceRepository
+                    .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(new List<Maintenance>());
+
+                _tripRepository
+                    .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                    .ReturnsAsync(new List<Trip>());
+
+                var query = new GetFleetDashboardQuery(null, null);
+
+                // Act
+                var result = await _handler.Handle(
+                    query,
+                    CancellationToken.None);
+
+                // Assert
+                result.TotalVehicles.Should().Be(2);
+            }
+        }
     }
-}
+
