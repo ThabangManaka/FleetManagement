@@ -2,6 +2,7 @@
   <Folder Name="/Services/" />
   <Folder Name="/Services/Fleet/">
     <Project Path="Services/Fleet/Fleet.API/Fleet.API.csproj" />
+    <Project Path="Services/Fleet/Fleet.Application.Tests/Fleet.Application.Tests.csproj" Id="73e97f0a-0421-49f2-81b3-3a622b26dc9a" />
     <Project Path="Services/Fleet/Fleet.Application/Fleet.Application.csproj" />
     <Project Path="Services/Fleet/Fleet.Core/Fleet.Core.csproj" />
     <Project Path="Services/Fleet/Fleet.Infrastructure/Fleet.Infrastructure.csproj" />
