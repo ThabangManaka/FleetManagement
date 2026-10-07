@@ -445,6 +445,78 @@ namespace Fleet.Application.Tests.Features.FleetDashboard
             result.TotalDistanceTravelled.Should().Be(500);
             result.AverageDistancePerTrip.Should().Be(250);
         }
+        [Fact]
+        public async Task Handle_Should_Ignore_Trips_Without_EndMileage()
+        {
+            // Arrange
+            _vehicleRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Vehicle>());
+
+            _driverRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Driver>());
+
+            _fuelRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<FuelTransaction>());
+
+            _maintenanceRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Maintenance>());
+
+            var vehicleId = Guid.NewGuid();
+            var driverId = Guid.NewGuid();
+
+            var completedTrip = new Trip(
+                vehicleId,
+                driverId,
+                "Johannesburg",
+                "Pretoria",
+                DateTime.UtcNow,
+                1000,
+                null);
+
+            completedTrip.UpdateDetails(
+                "Johannesburg",
+                "Pretoria",
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(2),
+                1000,
+                1300,
+                TripStatus.Completed,
+                null);
+
+            var incompleteTrip = new Trip(
+                vehicleId,
+                driverId,
+                "Pretoria",
+                "Johannesburg",
+                DateTime.UtcNow,
+                1300,
+                null);
+
+            _tripRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Trip>
+                {
+            completedTrip,
+            incompleteTrip
+                });
+
+            var query = new GetFleetDashboardQuery(null, null);
+
+            // Act
+            var result = await _handler.Handle(
+                query,
+                CancellationToken.None);
+
+            // Assert
+            result.TotalTrips.Should().Be(2);
+            result.TotalDistanceTravelled.Should().Be(300);
+            result.AverageDistancePerTrip.Should().Be(300);
+        }
+
     }
     }
 

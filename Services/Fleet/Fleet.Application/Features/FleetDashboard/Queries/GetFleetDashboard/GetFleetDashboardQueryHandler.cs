@@ -136,14 +136,17 @@ namespace Fleet.Application.Features.FleetDashboard.Queries.GetFleetDashboard
 
             var totalTrips = trips.Count;
 
-            var totalDistanceTravelled = trips
-                .Where(x => x.EndMileage.HasValue)
+            var completedTrips = trips
+            .Where(x => x.EndMileage.HasValue)
+            .ToList();
+
+            var totalDistanceTravelled = completedTrips
                 .Sum(x =>
                     x.EndMileage!.Value - x.StartMileage);
 
             var averageDistancePerTrip =
-                totalTrips > 0
-                    ? totalDistanceTravelled / totalTrips
+                completedTrips.Count > 0
+                    ? totalDistanceTravelled / completedTrips.Count
                     : 0;
 
             return new FleetDashboardResponse(
