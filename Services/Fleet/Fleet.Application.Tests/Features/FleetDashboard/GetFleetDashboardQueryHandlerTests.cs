@@ -365,6 +365,86 @@ namespace Fleet.Application.Tests.Features.FleetDashboard
                 .ThrowAsync<ArgumentException>()
                 .WithMessage("The 'From' date cannot be later than the 'To' date.");
         }
+
+        [Fact]
+        public async Task Handle_Should_Calculate_Trip_Distance_Correctly()
+        {
+            // Arrange
+            _vehicleRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Vehicle>());
+
+            _driverRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Driver>());
+
+            _fuelRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<FuelTransaction>());
+
+            _maintenanceRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Maintenance>());
+
+            var trip1 = new Trip(
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                "Johannesburg",
+                "Pretoria",
+                DateTime.UtcNow,
+                1000,
+                null);
+
+            var trip2 = new Trip(
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                "Pretoria",
+                "Johannesburg",
+                DateTime.UtcNow,
+                1500,
+                null);
+
+            // Complete the trips
+            trip1.UpdateDetails(
+                "Johannesburg",
+                "Pretoria",
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(2),
+                1000,
+                1200,
+                TripStatus.Completed,
+                null);
+
+            trip2.UpdateDetails(
+                "Pretoria",
+                "Johannesburg",
+                DateTime.UtcNow,
+                DateTime.UtcNow.AddHours(2),
+                1500,
+                1800,
+                TripStatus.Completed,
+                null);
+
+            _tripRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Trip>
+                {
+            trip1,
+            trip2
+                });
+
+            var query = new GetFleetDashboardQuery(null, null);
+
+            // Act
+            var result = await _handler.Handle(
+                query,
+                CancellationToken.None);
+
+            // Assert
+            result.TotalTrips.Should().Be(2);
+            result.TotalDistanceTravelled.Should().Be(500);
+            result.AverageDistancePerTrip.Should().Be(250);
+        }
     }
     }
 
