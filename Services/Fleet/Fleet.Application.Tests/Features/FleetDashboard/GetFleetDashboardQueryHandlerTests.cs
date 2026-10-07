@@ -344,6 +344,27 @@ namespace Fleet.Application.Tests.Features.FleetDashboard
             result.AverageFuelCostPerVehicle.Should().Be(750);
             result.AverageMaintenanceCostPerVehicle.Should().Be(2250);
         }
+
+        [Fact]
+        public async Task Handle_Should_Throw_When_From_Date_Is_Later_Than_To_Date()
+        {
+            // Arrange
+            var from = new DateTime(2026, 10, 10);
+            var to = new DateTime(2026, 10, 1);
+
+            var query = new GetFleetDashboardQuery(from, to);
+
+            // Act
+            Func<Task> act = async () =>
+                await _handler.Handle(
+                    query,
+                    CancellationToken.None);
+
+            // Assert
+            await act.Should()
+                .ThrowAsync<ArgumentException>()
+                .WithMessage("The 'From' date cannot be later than the 'To' date.");
+        }
     }
     }
 
