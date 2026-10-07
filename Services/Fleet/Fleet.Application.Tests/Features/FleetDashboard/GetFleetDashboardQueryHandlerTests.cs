@@ -252,6 +252,98 @@ namespace Fleet.Application.Tests.Features.FleetDashboard
             result.TotalDrivers.Should().Be(3);
             result.ActiveDrivers.Should().Be(2);
         }
+        [Fact]
+        public async Task Handle_Should_Calculate_Financial_Costs_Correctly()
+        {
+            // Arrange
+            var vehicle1 = new Vehicle(
+                "TEST001",
+                "VIN001",
+                "Toyota",
+                "Hilux",
+                2025,
+                FuelType.Diesel);
+
+            var vehicle2 = new Vehicle(
+                "TEST002",
+                "VIN002",
+                "Ford",
+                "Ranger",
+                2026,
+                FuelType.Diesel);
+
+            _vehicleRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Vehicle>
+                {
+            vehicle1,
+            vehicle2
+                });
+
+            _driverRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Driver>());
+
+            _fuelRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<FuelTransaction>
+                {
+            new FuelTransaction(
+                vehicle1.Id,
+                DateTime.UtcNow,
+                1000,
+                50,
+                30,
+                "Diesel",
+                "Test Station",
+                null,
+                null),
+
+            new FuelTransaction(
+                vehicle2.Id,
+                DateTime.UtcNow,
+                2000,
+                50,
+                0,
+                "Diesel",
+                "Test Station",
+                null,
+                null)
+                });
+
+            _maintenanceRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Maintenance>
+                {
+            new Maintenance(
+                vehicle1.Id,
+                "Major Service",
+                "Engine service",
+                DateTime.UtcNow,
+                1000,
+                4500,
+                null)
+                });
+
+            _tripRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Trip>());
+
+            var query = new GetFleetDashboardQuery(null, null);
+
+            // Act
+            var result = await _handler.Handle(
+                query,
+                CancellationToken.None);
+
+            // Assert
+            result.TotalFuelCost.Should().Be(1500);
+            result.TotalMaintenanceCost.Should().Be(4500);
+            result.TotalOperatingCost.Should().Be(6000);
+
+            result.AverageFuelCostPerVehicle.Should().Be(750);
+            result.AverageMaintenanceCostPerVehicle.Should().Be(2250);
+        }
     }
     }
 
