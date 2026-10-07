@@ -175,6 +175,83 @@ namespace Fleet.Application.Tests.Features.FleetDashboard
                 result.AssignedVehicles.Should().Be(1);
                 result.VehiclesInMaintenance.Should().Be(1);
             }
-     }
+        [Fact]
+        public async Task Handle_Should_Return_Correct_Driver_Counts()
+        {
+            // Arrange
+            var activeDriver1 = new Driver(
+                "EMP001",
+                "John",
+                "Doe",
+                "john@example.com",
+                "0111111111",
+                "LIC001",
+                DateTime.UtcNow.AddYears(2));
+
+            var activeDriver2 = new Driver(
+                "EMP002",
+                "Jane",
+                "Doe",
+                "jane@example.com",
+                "0111111112",
+                "LIC002",
+                DateTime.UtcNow.AddYears(2));
+
+            var inactiveDriver = new Driver(
+                "EMP003",
+                "Peter",
+                "Smith",
+                "peter@example.com",
+                "0111111113",
+                "LIC003",
+                DateTime.UtcNow.AddYears(2));
+
+            inactiveDriver.UpdateDetails(
+                "EMP003",
+                "Peter",
+                "Smith",
+                "peter@example.com",
+                "0111111113",
+                "LIC003",
+                DateTime.UtcNow.AddYears(2),
+                DriverStatus.Inactive);
+
+            _vehicleRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Vehicle>());
+
+            _driverRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Driver>
+                {
+            activeDriver1,
+            activeDriver2,
+            inactiveDriver
+                });
+
+            _fuelRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<FuelTransaction>());
+
+            _maintenanceRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Maintenance>());
+
+            _tripRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Trip>());
+
+            var query = new GetFleetDashboardQuery(null, null);
+
+            // Act
+            var result = await _handler.Handle(
+                query,
+                CancellationToken.None);
+
+            // Assert
+            result.TotalDrivers.Should().Be(3);
+            result.ActiveDrivers.Should().Be(2);
+        }
+    }
     }
 
