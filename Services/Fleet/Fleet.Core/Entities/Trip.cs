@@ -34,20 +34,20 @@ namespace Fleet.Core.Entities
         {
         }
 
-        public Trip(
-            Guid vehicleId,
-            Guid driverId,
-            string startLocation,
-            string destination,
-            DateTime startDate,
-            int startMileage,
-            string? notes)
+         public Trip(
+          Guid vehicleId,
+          Guid driverId,
+          string startLocation,
+          string endLocation,
+          DateTime startDate,
+          int startMileage,
+          string? notes)
         {
             Id = Guid.NewGuid();
             VehicleId = vehicleId;
             DriverId = driverId;
             StartLocation = startLocation;
-            Destination = destination;
+            Destination = endLocation;
             StartDate = startDate;
             StartMileage = startMileage;
             Notes = notes;

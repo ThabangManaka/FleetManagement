@@ -681,6 +681,87 @@ namespace Fleet.Application.Tests.Features.FleetDashboard
             result.TotalMaintenanceCost.Should().Be(
                 maintenanceInsideRange.Cost);
         }
+        [Fact]
+        public async Task Handle_Should_Filter_Trips_By_Date_Range()
+        {
+            // Arrange
+            _vehicleRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Vehicle>());
+
+            _driverRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Driver>());
+
+            _fuelRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<FuelTransaction>());
+
+            _maintenanceRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Maintenance>());
+
+            var trip1 = new Fleet.Core.Entities.Trip(
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                "Johannesburg",
+                "Pretoria",
+                DateTime.UtcNow,
+                1000,
+                null);
+
+            var trip2 = new Fleet.Core.Entities.Trip(
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                "Pretoria",
+                "Johannesburg",
+                DateTime.UtcNow,
+                1500,
+                null);
+
+            // Complete the trips
+            trip1.UpdateDetails(
+                "Johannesburg",
+                "Pretoria",
+                new DateTime(2026, 10, 15),
+                new DateTime(2026, 10, 15).AddHours(2),
+                1000,
+                1200,
+                TripStatus.Completed,
+                null);
+
+            trip2.UpdateDetails(
+                "Pretoria",
+                "Johannesburg",
+                new DateTime(2026, 11, 15),
+                new DateTime(2026, 11, 15).AddHours(2),
+                1500,
+                1800,
+                TripStatus.Completed,
+                null);
+
+            _tripRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Fleet.Core.Entities.Trip>
+                {
+            trip1,
+            trip2
+                });
+
+            var query = new GetFleetDashboardQuery(
+                new DateTime(2026, 10, 1),
+                new DateTime(2026, 10, 31));
+
+            // Act
+            var result = await _handler.Handle(
+                query,
+                CancellationToken.None);
+
+            // Assert
+            result.TotalTrips.Should().Be(1);
+            result.TotalDistanceTravelled.Should().Be(200);
+            result.AverageDistancePerTrip.Should().Be(200);
+        }
     }
     }
 
