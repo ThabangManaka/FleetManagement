@@ -516,7 +516,96 @@ namespace Fleet.Application.Tests.Features.FleetDashboard
             result.TotalDistanceTravelled.Should().Be(300);
             result.AverageDistancePerTrip.Should().Be(300);
         }
+        [Fact]
+        public async Task Handle_Should_Filter_Fuel_Transactions_By_Date_Range()
+        {
+            // Arrange
+            var vehicle = new Vehicle(
+                "TEST001",
+                "VIN001",
+                "Toyota",
+                "Hilux",
+                2025,
+                FuelType.Diesel);
 
+            var fromDate = new DateTime(2026, 10, 1);
+            var toDate = new DateTime(2026, 10, 31);
+
+            var fuelInsideRange = new FuelTransaction(
+                vehicle.Id,
+                DateTime.UtcNow,
+                1000,
+                50,
+                30,
+                "Diesel",
+                "Test Station",
+                null,
+                null);
+
+            var fuelOutsideRange = new FuelTransaction(
+                vehicle.Id,
+                DateTime.UtcNow,
+                2000,
+                50,
+                30,
+                "Diesel",
+                "Test Station",
+                null,
+                null);
+
+            // Set CreatedAt values for the test
+            typeof(FuelTransaction)
+                .GetProperty(nameof(FuelTransaction.CreatedAt))!
+                .SetValue(
+                    fuelInsideRange,
+                    new DateTime(2026, 10, 15));
+
+            typeof(FuelTransaction)
+                .GetProperty(nameof(FuelTransaction.CreatedAt))!
+                .SetValue(
+                    fuelOutsideRange,
+                    new DateTime(2026, 11, 15));
+
+            _vehicleRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Vehicle>
+                {
+            vehicle
+                });
+
+            _driverRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Driver>());
+
+            _fuelRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<FuelTransaction>
+                {
+            fuelInsideRange,
+            fuelOutsideRange
+                });
+
+            _maintenanceRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Maintenance>());
+
+            _tripRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Trip>());
+
+            var query = new GetFleetDashboardQuery(
+                fromDate,
+                toDate);
+
+            // Act
+            var result = await _handler.Handle(
+                query,
+                CancellationToken.None);
+
+            // Assert
+            result.TotalFuelCost.Should().Be(
+                fuelInsideRange.TotalCost);
+        }
     }
     }
 
