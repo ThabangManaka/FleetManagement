@@ -606,6 +606,81 @@ namespace Fleet.Application.Tests.Features.FleetDashboard
             result.TotalFuelCost.Should().Be(
                 fuelInsideRange.TotalCost);
         }
+
+
+        [Fact]
+        public async Task Handle_Should_Filter_Maintenance_By_Date_Range()
+        {
+            // Arrange
+            var vehicle = new Vehicle(
+                "TEST001",
+                "VIN001",
+                "Toyota",
+                "Hilux",
+                2025,
+                FuelType.Diesel);
+
+            var fromDate = new DateTime(2026, 10, 1);
+            var toDate = new DateTime(2026, 10, 31);
+
+            var maintenanceInsideRange = new Maintenance(
+                vehicle.Id,
+                "Major Service",
+                "Engine service",
+                new DateTime(2026, 10, 15),
+                1000,
+                4500,
+                null);
+
+            var maintenanceOutsideRange = new Maintenance(
+                vehicle.Id,
+                "Brake Service",
+                "Brake replacement",
+                new DateTime(2026, 11, 15),
+                2000,
+                3000,
+                null);
+
+            _vehicleRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Vehicle>
+                {
+            vehicle
+                });
+
+            _driverRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Driver>());
+
+            _fuelRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<FuelTransaction>());
+
+            _maintenanceRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Maintenance>
+                {
+            maintenanceInsideRange,
+            maintenanceOutsideRange
+                });
+
+            _tripRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Trip>());
+
+            var query = new GetFleetDashboardQuery(
+                fromDate,
+                toDate);
+
+            // Act
+            var result = await _handler.Handle(
+                query,
+                CancellationToken.None);
+
+            // Assert
+            result.TotalMaintenanceCost.Should().Be(
+                maintenanceInsideRange.Cost);
+        }
     }
     }
 
