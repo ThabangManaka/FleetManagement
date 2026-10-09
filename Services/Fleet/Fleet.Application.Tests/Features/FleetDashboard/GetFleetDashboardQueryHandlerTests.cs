@@ -762,6 +762,66 @@ namespace Fleet.Application.Tests.Features.FleetDashboard
             result.TotalDistanceTravelled.Should().Be(200);
             result.AverageDistancePerTrip.Should().Be(200);
         }
+
+        [Fact]
+        public async Task Handle_Should_Return_Zero_Distance_When_All_Trips_Are_Incomplete()
+        {
+            // Arrange
+            _vehicleRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Vehicle>());
+
+            _driverRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Driver>());
+
+            _fuelRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<FuelTransaction>());
+
+            _maintenanceRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Maintenance>());
+
+            var trip1 = new Trip(
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                "Johannesburg",
+                "Pretoria",
+                new DateTime(2026, 10, 5),
+                1000,
+                null);
+
+            var trip2 = new Trip(
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                "Pretoria",
+                "Durban",
+                new DateTime(2026, 10, 6),
+                1500,
+                null);
+
+            _tripRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Trip>
+                {
+            trip1,
+            trip2
+                });
+
+            var query = new GetFleetDashboardQuery(null, null);
+
+            // Act
+            var result = await _handler.Handle(
+                query,
+                CancellationToken.None);
+
+            // Assert
+            result.TotalTrips.Should().Be(2);
+            result.TotalDistanceTravelled.Should().Be(0);
+            result.AverageDistancePerTrip.Should().Be(0);
+        }
+ 
     }
     }
 
