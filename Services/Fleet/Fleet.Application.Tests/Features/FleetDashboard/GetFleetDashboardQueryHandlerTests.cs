@@ -859,6 +859,63 @@ namespace Fleet.Application.Tests.Features.FleetDashboard
             result.AverageDistancePerTrip.Should().Be(0);
         }
 
+        [Fact]
+        public async Task Handle_Should_Include_Trips_On_To_Date()
+        {
+            // Arrange
+            _vehicleRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Vehicle>());
+
+            _driverRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Driver>());
+
+            _fuelRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<FuelTransaction>());
+
+            _maintenanceRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Maintenance>());
+
+            var trip = new Trip(
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                "Johannesburg",
+                "Pretoria",
+                new DateTime(2026, 10, 31, 23, 30, 0),
+                1000,
+                null);
+
+            trip.UpdateDetails(
+                "Johannesburg",
+                "Pretoria",
+                new DateTime(2026, 10, 31, 23, 30, 0),
+                new DateTime(2026, 11, 1, 1, 30, 0),
+                1000,
+                1200,
+                TripStatus.Completed,
+                null);
+
+            _tripRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Trip> { trip });
+
+            var query = new GetFleetDashboardQuery(
+                new DateTime(2026, 10, 1),
+                new DateTime(2026, 10, 31));
+
+            // Act
+            var result = await _handler.Handle(
+                query,
+                CancellationToken.None);
+
+            // Assert
+            result.TotalTrips.Should().Be(1);
+            result.TotalDistanceTravelled.Should().Be(200);
+        }
+
     }
     }
 
