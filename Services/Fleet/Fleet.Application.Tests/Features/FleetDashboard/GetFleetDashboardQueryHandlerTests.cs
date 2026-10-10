@@ -1458,6 +1458,66 @@ namespace Fleet.Application.Tests.Features.FleetDashboard
             result.TotalMaintenanceCost.Should()
                 .Be(maintenanceInsideRange.Cost);
         }
+      
+        [Fact]
+        public async Task Handle_Should_Include_Maintenance_On_To_Date()
+        {
+            // Arrange
+            var vehicle = new Vehicle(
+                "TEST001",
+                "VIN001",
+                "Toyota",
+                "Hilux",
+                2025,
+                FuelType.Diesel);
+
+            var toDate = new DateTime(2026, 10, 31);
+
+            var maintenanceOnToDate = new Maintenance(
+                vehicle.Id,
+                "Major Service",
+                "Engine service",
+                new DateTime(2026, 10, 31, 23, 30, 0),
+                1000,
+                4500,
+                null);
+
+            _vehicleRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Vehicle> { vehicle });
+
+            _driverRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Driver>());
+
+            _fuelRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<FuelTransaction>());
+
+            _maintenanceRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Maintenance>
+                {
+            maintenanceOnToDate
+                });
+
+            _tripRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Trip>());
+
+            var query = new GetFleetDashboardQuery(
+                null,
+                toDate);
+
+            // Act
+            var result = await _handler.Handle(
+                query,
+                CancellationToken.None);
+
+            // Assert
+            result.TotalMaintenanceCost.Should()
+                .Be(maintenanceOnToDate.Cost);
+        }
 
     }
     }
