@@ -1249,8 +1249,74 @@ namespace Fleet.Application.Tests.Features.FleetDashboard
                 .Be(fuelInsideRange.TotalCost);
         }
 
+    
+        [Fact]
+        public async Task Handle_Should_Include_Fuel_Transactions_On_From_Date()
+        {
+            // Arrange
+            var vehicle = new Vehicle(
+                "TEST001",
+                "VIN001",
+                "Toyota",
+                "Hilux",
+                2025,
+                FuelType.Diesel);
 
+            var fromDate = new DateTime(2026, 10, 1);
 
+            var fuelOnFromDate = new FuelTransaction(
+                vehicle.Id,
+                DateTime.UtcNow,
+                1000,
+                50,
+                30,
+                "Diesel",
+                "Test Station",
+                null,
+                null);
+
+            typeof(FuelTransaction)
+                .GetProperty(nameof(FuelTransaction.CreatedAt))!
+                .SetValue(
+                    fuelOnFromDate,
+                    new DateTime(2026, 10, 1, 0, 0, 0));
+
+            _vehicleRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Vehicle> { vehicle });
+
+            _driverRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Driver>());
+
+            _fuelRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<FuelTransaction>
+                {
+            fuelOnFromDate
+                });
+
+            _maintenanceRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Maintenance>());
+
+            _tripRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Trip>());
+
+            var query = new GetFleetDashboardQuery(
+                fromDate,
+                null);
+
+            // Act
+            var result = await _handler.Handle(
+                query,
+                CancellationToken.None);
+
+            // Assert
+            result.TotalFuelCost.Should()
+                .Be(fuelOnFromDate.TotalCost);
+        }
     }
     }
 
