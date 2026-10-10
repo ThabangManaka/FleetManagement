@@ -1077,6 +1077,84 @@ namespace Fleet.Application.Tests.Features.FleetDashboard
             result.TotalFuelCost.Should().Be(fuelInsideRange.TotalCost);
         }
 
+        [Fact]
+        public async Task Handle_Should_Filter_Fuel_Transactions_By_To_Date_Only()
+        {
+            // Arrange
+            var vehicle = new Vehicle(
+                "TEST001",
+                "VIN001",
+                "Toyota",
+                "Hilux",
+                2025,
+                FuelType.Diesel);
+
+            var toDate = new DateTime(2026, 10, 31);
+
+            var fuelInsideRange = new FuelTransaction(
+                vehicle.Id,
+                DateTime.UtcNow,
+                1000,
+                50,
+                30,
+                "Diesel",
+                "Test Station",
+                null,
+                null);
+
+            var fuelAfterRange = new FuelTransaction(
+                vehicle.Id,
+                DateTime.UtcNow,
+                2000,
+                50,
+                30,
+                "Diesel",
+                "Test Station",
+                null,
+                null);
+
+            typeof(FuelTransaction)
+                .GetProperty(nameof(FuelTransaction.CreatedAt))!
+                .SetValue(fuelInsideRange, new DateTime(2026, 10, 15));
+
+            typeof(FuelTransaction)
+                .GetProperty(nameof(FuelTransaction.CreatedAt))!
+                .SetValue(fuelAfterRange, new DateTime(2026, 11, 15));
+
+            _vehicleRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Vehicle> { vehicle });
+
+            _driverRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Driver>());
+
+            _fuelRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<FuelTransaction>
+                {
+            fuelInsideRange,
+            fuelAfterRange
+                });
+
+            _maintenanceRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Maintenance>());
+
+            _tripRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Trip>());
+
+            var query = new GetFleetDashboardQuery(null, toDate);
+
+            // Act
+            var result = await _handler.Handle(
+                query,
+                CancellationToken.None);
+
+            // Assert
+            result.TotalFuelCost.Should().Be(fuelInsideRange.TotalCost);
+        }
 
     }
     }
