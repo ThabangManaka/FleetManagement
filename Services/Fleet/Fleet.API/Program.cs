@@ -4,13 +4,19 @@ using Fleet.Infrastructure;
 using Fleet.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 
 
 Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .Enrich.FromLogContext()
     .WriteTo.Console()
     .WriteTo.File(
         "logs/fleet-api-.log",
-        rollingInterval: RollingInterval.Day)
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 30,
+        shared: true)
     .CreateLogger();
 
 
@@ -23,6 +29,20 @@ try
     builder.Host.UseSerilog();
 
     builder.Services.AddApplication();
+
+    builder.Services.AddRateLimiter(options =>
+    {
+        options.RejectionStatusCode =
+            StatusCodes.Status429TooManyRequests;
+
+        options.AddFixedWindowLimiter("FleetApi", limiter =>
+        {
+            limiter.PermitLimit = 100;
+            limiter.Window = TimeSpan.FromMinutes(1);
+            limiter.QueueLimit = 0;
+            limiter.AutoReplenishment = true;
+        });
+    });
 
     builder.Services.AddInfrastructure(
         builder.Configuration);
@@ -49,13 +69,23 @@ try
 
     var app = builder.Build();
 
-    app.UseCors("AngularClient");
-
     app.UseExceptionHandler();
 
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseMiddleware<SecurityHeadersMiddleware>();
 
+    app.UseSerilogRequestLogging();
+
+    app.UseHttpsRedirection();
+
+    app.UseRouting();
+
+    app.UseCors("AngularClient");
+
+    app.UseRateLimiter();
+
+    app.UseSwagger();
+
+    app.UseSwaggerUI();
 
     app.MapControllers();
 

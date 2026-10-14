@@ -5,11 +5,13 @@ using Fleet.Application.Features.Vehicles.Queries.GetVehicles;
 using Fleet.Application.Features.Vehicles.Queries.GetVehicleSummary;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace Fleet.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [EnableRateLimiting("FleetApi")]
     public class VehiclesController : ControllerBase
     {
         private readonly IMediator _mediator;
