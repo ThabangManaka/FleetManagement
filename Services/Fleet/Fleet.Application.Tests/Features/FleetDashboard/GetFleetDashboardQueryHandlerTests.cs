@@ -1649,6 +1649,89 @@ namespace Fleet.Application.Tests.Features.FleetDashboard
                 .Be(maintenanceOnFromDate.Cost);
         }
 
+        [Fact]
+        public async Task Handle_Should_Filter_Trips_By_From_Date_Only()
+        {
+            // Arrange
+            var fromDate = new DateTime(2026, 10, 1);
+
+            var tripBeforeRange = new Trip(
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                "Johannesburg",
+                "Pretoria",
+                new DateTime(2026, 9, 15),
+                1000,
+                null);
+
+            tripBeforeRange.UpdateDetails(
+                "Johannesburg",
+                "Pretoria",
+                new DateTime(2026, 9, 15),
+                new DateTime(2026, 9, 15).AddHours(2),
+                1000,
+                1200,
+                TripStatus.Completed,
+                null);
+
+            var tripInsideRange = new Trip(
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                "Pretoria",
+                "Johannesburg",
+                new DateTime(2026, 10, 15),
+                1500,
+                null);
+
+            tripInsideRange.UpdateDetails(
+                "Pretoria",
+                "Johannesburg",
+                new DateTime(2026, 10, 15),
+                new DateTime(2026, 10, 15).AddHours(2),
+                1500,
+                1800,
+                TripStatus.Completed,
+                null);
+
+            _vehicleRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Vehicle>());
+
+            _driverRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Driver>());
+
+            _fuelRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<FuelTransaction>());
+
+            _maintenanceRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Maintenance>());
+
+            _tripRepository
+                .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new List<Trip>
+                {
+            tripBeforeRange,
+            tripInsideRange
+                });
+
+            var query = new GetFleetDashboardQuery(
+                fromDate,
+                null);
+
+            // Act
+            var result = await _handler.Handle(
+                query,
+                CancellationToken.None);
+
+            // Assert
+            result.TotalTrips.Should().Be(1);
+            result.TotalDistanceTravelled.Should().Be(300);
+            result.AverageDistancePerTrip.Should().Be(300);
+        }
+
     }
     }
 
