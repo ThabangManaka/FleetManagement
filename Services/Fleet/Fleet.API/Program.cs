@@ -83,21 +83,23 @@ try
 
     app.UseRateLimiter();
 
-    app.UseSwagger();
-
-    app.UseSwaggerUI();
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
 
     app.MapControllers();
 
     Log.Information("Fleet API started successfully");
 
-app.Run();
-}
-catch (Exception ex)
-{
-    Log.Fatal(ex, "Fleet API terminated unexpectedly");
-}
-finally
-{
-    Log.CloseAndFlush();
-}
+    app.Run();
+    }
+    catch (Exception ex)
+    {
+        Log.Fatal(ex, "Fleet API terminated unexpectedly");
+    }
+    finally
+    {
+        Log.CloseAndFlush();
+    }
