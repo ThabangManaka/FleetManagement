@@ -1,3 +1,4 @@
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services
@@ -6,6 +7,12 @@ builder.Services
         builder.Configuration.GetSection("ReverseProxy"));
 
 var app = builder.Build();
+
+app.MapGet("/health", () => Results.Ok(new
+{
+    Status = "Healthy",
+    Service = "Fleet Gateway"
+}));
 
 app.UseHttpsRedirection();
 
