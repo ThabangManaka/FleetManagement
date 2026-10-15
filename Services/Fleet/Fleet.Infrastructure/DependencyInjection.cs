@@ -21,7 +21,14 @@ namespace Fleet.Infrastructure
         {
             services.AddDbContext<FleetDbContext>(options =>
                 options.UseSqlServer(
-                    configuration.GetConnectionString("FleetDb")));
+                    configuration.GetConnectionString("FleetDb"),
+                     sqlOptions =>
+                     {
+                         sqlOptions.EnableRetryOnFailure(
+                             maxRetryCount: 5,
+                             maxRetryDelay: TimeSpan.FromSeconds(10),
+                             errorNumbersToAdd: null);
+                     }));
 
             services.AddScoped<IVehicleRepository, VehicleRepository>();
             services.AddScoped<IDriverRepository, DriverRepository>();
