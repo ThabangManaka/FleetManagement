@@ -4,7 +4,7 @@ using Fleet.Infrastructure;
 using Fleet.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
-using System.Threading.RateLimiting;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.RateLimiting;
 
 
@@ -52,7 +52,11 @@ try
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
 
-    builder.Services.AddHealthChecks();
+    builder.Services.AddHealthChecks()
+           .AddSqlServer(
+        builder.Configuration.GetConnectionString("ConnectionStrings")!,
+        name: "sqlserver",
+        tags: new[] { "ready" });
 
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
@@ -66,6 +70,7 @@ try
                 .AllowAnyMethod();
         });
     });
+
 
     var app = builder.Build();
 
@@ -94,6 +99,8 @@ try
     Log.Information("Fleet API started successfully");
 
     app.Run();
+
+    app.MapHealthChecks("/health");
     }
     catch (Exception ex)
     {
