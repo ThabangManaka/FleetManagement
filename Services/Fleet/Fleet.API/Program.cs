@@ -2,10 +2,11 @@ using Fleet.API.Middleware;
 using Fleet.Application;
 using Fleet.Infrastructure;
 using Fleet.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
-using Serilog;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.RateLimiting;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Serilog;
+using System.Threading.RateLimiting;
 
 
 Log.Logger = new LoggerConfiguration()
@@ -35,13 +36,20 @@ try
         options.RejectionStatusCode =
             StatusCodes.Status429TooManyRequests;
 
-        options.AddFixedWindowLimiter("FleetApi", limiter =>
-        {
-            limiter.PermitLimit = 100;
-            limiter.Window = TimeSpan.FromMinutes(1);
-            limiter.QueueLimit = 0;
-            limiter.AutoReplenishment = true;
-        });
+        options.GlobalLimiter =
+            PartitionedRateLimiter.Create<HttpContext, string>(
+                httpContext =>
+                    RateLimitPartition.GetFixedWindowLimiter(
+                        partitionKey:
+                            httpContext.Connection.RemoteIpAddress?.ToString()
+                            ?? "unknown",
+                        factory: _ => new FixedWindowRateLimiterOptions
+                        {
+                            PermitLimit = 100,
+                            Window = TimeSpan.FromMinutes(1),
+                            QueueLimit = 0,
+                            AutoReplenishment = true
+                        }));
     });
 
     builder.Services.AddInfrastructure(
